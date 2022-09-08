@@ -78,6 +78,9 @@ export default function RecordList() {
 
   if (boozeType === "None") { //if "None", filter by name OR ingredient else show all
     if (filterByName !== ""){
+      console.log(filterByName);
+      console.log()
+      console.log(mapRecords(records.filter((el) => el.name === filterByName)));
       return mapRecords(records.filter((el) => el.name === filterByName));
     } else if (filterByIngredient !== ""){
         let tempArray = [];

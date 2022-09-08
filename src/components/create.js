@@ -46,7 +46,7 @@ export default function Create() {
      <h3>Create New Cocktail</h3>
      <form onSubmit={onSubmit}>
        <div className="form-group">
-         <label htmlFor="name"> Name</label>
+         <label htmlFor="name">Name</label>
          <input
            type="text"
            className="form-control"
@@ -56,7 +56,7 @@ export default function Create() {
          />
        </div>
        <div className="form-group">
-         <label htmlFor="ingredients"> Ingredients (Please enter ingredients as a comma seperated list)</label>
+         <label htmlFor="ingredients">Ingredients (Please enter ingredients as a comma seperated list)</label>
          <input
            type="text"
            className="form-control"
