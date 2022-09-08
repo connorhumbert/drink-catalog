@@ -4,8 +4,8 @@ import { useNavigate } from "react-router";
 export default function Create() {
  const [form, setForm] = useState({
    name: "",
-   position: "",
-   level: "",
+   ingredients: "",
+   booze: "",
  });
  const navigate = useNavigate();
  
@@ -15,37 +15,38 @@ export default function Create() {
      return { ...prev, ...value };
    });
  }
- 
+
  // This function will handle the submission.
  async function onSubmit(e) {
    e.preventDefault();
  
    // When a post request is sent to the create url, we'll add a new record to the database.
-   const newPerson = { ...form };
+   const newCocktail = { ...form };
+  
  
    await fetch("https://mern-cocktail.herokuapp.com/record/add", {
      method: "POST",
      headers: {
        "Content-Type": "application/json",
      },
-     body: JSON.stringify(newPerson),
+     body: JSON.stringify(newCocktail),
    })
    .catch(error => {
      window.alert(error);
      return;
    });
  
-   setForm({ name: "", position: "", level: "" });
+   setForm({ name: "", ingredients: "", booze: "" });
    navigate("/");
  }
  
  // This following section will display the form that takes the input from the user.
  return (
    <div>
-     <h3>Create New Record</h3>
+     <h3>Create New Cocktail</h3>
      <form onSubmit={onSubmit}>
        <div className="form-group">
-         <label htmlFor="name">Name</label>
+         <label htmlFor="name"> Name</label>
          <input
            type="text"
            className="form-control"
@@ -55,13 +56,13 @@ export default function Create() {
          />
        </div>
        <div className="form-group">
-         <label htmlFor="position">Position</label>
+         <label htmlFor="ingredients"> Ingredients (Please enter ingredients as a comma seperated list)</label>
          <input
            type="text"
            className="form-control"
-           id="position"
-           value={form.position}
-           onChange={(e) => updateForm({ position: e.target.value })}
+           id="ingredients"
+           value={form.ingredients}
+           onChange={(e) => updateForm({ ingredients: e.target.value })}
          />
        </div>
        <div className="form-group">
@@ -69,43 +70,79 @@ export default function Create() {
            <input
              className="form-check-input"
              type="radio"
-             name="positionOptions"
-             id="positionIntern"
-             value="Intern"
-             checked={form.level === "Intern"}
-             onChange={(e) => updateForm({ level: e.target.value })}
+             name="boozeOptions"
+             id="boozeBOURBON/RYE/WHISKEY"
+             value="Whiskey/Rye/Bourbon"
+             checked={form.booze === "Whiskey/Rye/Bourbon"}
+             onChange={(e) => updateForm({ booze: e.target.value })}
            />
-           <label htmlFor="positionIntern" className="form-check-label">Intern</label>
+           <label htmlFor="booze" className="form-check-label">WHISKEY/BOURBON/RYE</label>
          </div>
          <div className="form-check form-check-inline">
-           <input
+          <input
              className="form-check-input"
              type="radio"
-             name="positionOptions"
-             id="positionJunior"
-             value="Junior"
-             checked={form.level === "Junior"}
-             onChange={(e) => updateForm({ level: e.target.value })}
+             name="boozeOptions"
+             id="boozeTEQUILA"
+             value="Tequila"
+             checked={form.booze === "Tequila"}
+             onChange={(e) => updateForm({ booze: e.target.value })}
            />
-           <label htmlFor="positionJunior" className="form-check-label">Junior</label>
+           <label htmlFor="booze" className="form-check-label">TEQUILA</label>
          </div>
          <div className="form-check form-check-inline">
-           <input
+          <input
              className="form-check-input"
              type="radio"
-             name="positionOptions"
-             id="positionSenior"
-             value="Senior"
-             checked={form.level === "Senior"}
-             onChange={(e) => updateForm({ level: e.target.value })}
+             name="boozeOptions"
+             id="boozeGIN"
+             value="Gin"
+             checked={form.booze === "Gin"}
+             onChange={(e) => updateForm({ booze: e.target.value })}
            />
-           <label htmlFor="positionSenior" className="form-check-label">Senior</label>
+           <label htmlFor="booze" className="form-check-label">GIN</label>
+         </div>
+         <div className="form-check form-check-inline">
+          <input
+             className="form-check-input"
+             type="radio"
+             name="boozeOptions"
+             id="boozeRUM"
+             value="Rum"
+             checked={form.booze === "Rum"}
+             onChange={(e) => updateForm({ booze: e.target.value })}
+           />
+           <label htmlFor="booze" className="form-check-label">RUM</label>
+         </div>
+         <div className="form-check form-check-inline">
+          <input
+             className="form-check-input"
+             type="radio"
+             name="boozeOptions"
+             id="boozeVODKA"
+             value="Vodka"
+             checked={form.booze === "Vodka"}
+             onChange={(e) => updateForm({ booze: e.target.value })}
+           />
+           <label htmlFor="booze" className="form-check-label">VODKA</label>
+         </div>
+         <div className="form-check form-check-inline">
+          <input
+             className="form-check-input"
+             type="radio"
+             name="boozeOptions"
+             id="boozeWINE"
+             value="Wine"
+             checked={form.booze === "Wine"}
+             onChange={(e) => updateForm({ booze: e.target.value })}
+           />
+           <label htmlFor="booze" className="form-check-label">WINE</label>
          </div>
        </div>
        <div className="form-group">
          <input
            type="submit"
-           value="Create person"
+           value="Create Cocktail"
            className="btn btn-primary"
          />
        </div>

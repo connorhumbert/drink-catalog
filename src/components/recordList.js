@@ -8,7 +8,7 @@ const Record = (props) => (
  <tr>
    <td>{props.record.name}</td>
    <td>{props.record.booze}</td>
-   <td>{props.record.ingredients.map((list,index)=>
+   <td>{props.record.ingredients?.map((list,index)=>
             <li key = {index}>{list}</li>  
           )}</td>
    <td>
@@ -81,16 +81,12 @@ export default function RecordList() {
       return mapRecords(records.filter((el) => el.name === filterByName));
     } else if (filterByIngredient !== ""){
         let tempArray = [];
-
         for (var i = 0; i < records.length; i++) { //loop thorugh objects
-      
           for (const [key, value] of Object.entries(records[i])) {
             if (key === "ingredients"){
               value.forEach(element => {
                 if (element.toLowerCase().includes(filterByIngredient)){
-      
                   tempArray.push(records[i].name);
-
                   }
                 });
               }
@@ -105,6 +101,9 @@ export default function RecordList() {
  }
 
  const mapRecords = (arr) => {
+  // console.log(arr.booze);
+  // console.log(arr.ingredients);
+  // console.log(arr.name);
   return arr.map((record) => {
     return (
       <Record
