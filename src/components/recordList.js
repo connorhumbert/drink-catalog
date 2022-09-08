@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Dropdown from './Dropdown';
 import Form from "./Form";
+import Button from "./Button";
  
 const Record = (props) => (
  <tr>
@@ -36,9 +37,10 @@ const options = [
  
 export default function RecordList() {
  const [records, setRecords] = useState([]);
- const [boozeType, setBoozeType] = useState("");
+ const [boozeType, setBoozeType] = useState("None");
  const [filterByName, setFilterByName] = useState("");
  const [filterByIngredient, setFilterByIngredient] = useState("");
+ const [showChange, setShowChange] = useState(false); //inital show button
  
  // This method fetches the records from the database.
  useEffect(() => {
@@ -72,11 +74,11 @@ export default function RecordList() {
  }
  
  // This method will map out the cocktails on the table
- function recordList(boozeType, filterByIngredient) {
+ function recordList(boozeType, filterByIngredient, filterByName) {
 
   if (boozeType === "None") { //if "None", filter by name OR ingredient else show all
     if (filterByName !== ""){
-
+      return mapRecords(records.filter((el) => el.name === filterByName));
     } else if (filterByIngredient !== ""){
         let tempArray = [];
 
@@ -114,23 +116,25 @@ export default function RecordList() {
   });
  }
 
+   //initial on show button
+   const onShow = () => {
+    setShowChange(true);
+  }
+
  const handleAlcoholChange = (event) => {
   setBoozeType(event.target.value);
 };
 
  const handleNameChange = (formValue) => {
-
-  //set alcohol filter to none if filtering by ingredient
+  //set alcohol filter to none if filtering by name
   setBoozeType("None");
   setFilterByName(formValue.text.toLowerCase());
  };
 
  const handleIngredientChange = (formValue) => {
-
   //set alcohol filter to none if filtering by ingredient
   setBoozeType("None");
   setFilterByIngredient(formValue.text.toLowerCase());
-
  };
  
  // This following section will display the table with the records of individuals.
@@ -149,6 +153,9 @@ export default function RecordList() {
       <Form
           onSave = {handleNameChange} nameForm = 'Filter by Name '
       />
+      {!showChange ?  <Button
+          color = 'white' text = 'Start' onClick={onShow}
+      /> : ''}
      <table className="table table-striped" style={{ marginTop: 20 }}>
        <thead>
          <tr>
@@ -158,7 +165,7 @@ export default function RecordList() {
            <th>Action</th>
          </tr>
        </thead>
-       <tbody>{recordList(boozeType, filterByIngredient)}</tbody>
+       <tbody>{showChange ? recordList(boozeType, filterByIngredient, filterByName) : <p>Click Start</p>}</tbody>
      </table>
    </div>
  );
