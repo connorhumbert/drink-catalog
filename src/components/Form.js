@@ -18,11 +18,11 @@ const Form = ({nameForm, onSave}) => {
     }
 
   return (
-    <form class="form-inline" onSubmit={handleSubmit}>
-        <div class="input-group">
+    <form className="form-inline" onSubmit={handleSubmit}>
+        <div className="input-group">
 
             <label> {nameForm} 
-                <input class="form-control"
+                <input className="form-control"
                     type = "text"
                     value={text}
                     onChange= {(e) => setText(e.target.value)}

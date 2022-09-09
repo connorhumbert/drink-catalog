@@ -74,14 +74,12 @@ export default function RecordList() {
  }
  
  // This method will map out the cocktails on the table
- function recordList(boozeType, filterByIngredient, filterByName) {
+ function recordList() {
+
 
   if (boozeType === "None") { //if "None", filter by name OR ingredient else show all
     if (filterByName !== ""){
-      console.log(filterByName);
-      console.log()
-      console.log(mapRecords(records.filter((el) => el.name === filterByName)));
-      return mapRecords(records.filter((el) => el.name === filterByName));
+      return mapRecords(records.filter((el) => el.name.toLowerCase().includes(filterByName)));
     } else if (filterByIngredient !== ""){
         let tempArray = [];
         for (var i = 0; i < records.length; i++) { //loop thorugh objects
@@ -104,9 +102,6 @@ export default function RecordList() {
  }
 
  const mapRecords = (arr) => {
-  // console.log(arr.booze);
-  // console.log(arr.ingredients);
-  // console.log(arr.name);
   return arr.map((record) => {
     return (
       <Record
@@ -125,17 +120,21 @@ export default function RecordList() {
 
  const handleAlcoholChange = (event) => {
   setBoozeType(event.target.value);
+  setFilterByIngredient("");
+  setFilterByName("");
 };
 
  const handleNameChange = (formValue) => {
   //set alcohol filter to none if filtering by name
   setBoozeType("None");
+  setFilterByIngredient("");
   setFilterByName(formValue.text.toLowerCase());
  };
 
  const handleIngredientChange = (formValue) => {
   //set alcohol filter to none if filtering by ingredient
   setBoozeType("None");
+  setFilterByName("");
   setFilterByIngredient(formValue.text.toLowerCase());
  };
  
@@ -155,9 +154,7 @@ export default function RecordList() {
       <Form
           onSave = {handleNameChange} nameForm = 'Filter by Name '
       />
-      {!showChange ?  <Button
-          color = 'white' text = 'Start' onClick={onShow}
-      /> : ''}
+
      <table className="table table-striped" style={{ marginTop: 20 }}>
        <thead>
          <tr>
@@ -167,12 +164,11 @@ export default function RecordList() {
            <th>Action</th>
          </tr>
        </thead>
-       <tbody>{showChange ? recordList(boozeType, filterByIngredient, filterByName) : <p>Click Start</p>}</tbody>
+       <tbody>{recordList()}</tbody>
      </table>
    </div>
  );
 }
-
 // import React, { useEffect, useState } from "react";
 // import { Link } from "react-router-dom";
 // import Header from './Header';
