@@ -21,11 +21,12 @@ const Form = ({nameForm, onSave}) => {
     <form className="form-inline" onSubmit={handleSubmit}>
         <div className="input-group">
 
-            <label> {nameForm} 
+            <label>  
                 <input className="form-control"
                     type = "text"
                     value={text}
                     onChange= {(e) => setText(e.target.value)}
+                    placeholder={nameForm}
                 />
             </label>
         </div>

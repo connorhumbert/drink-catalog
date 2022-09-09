@@ -139,6 +139,7 @@ export default function Create() {
            <label htmlFor="booze" className="form-check-label">WINE</label>
          </div>
        </div>
+       <p></p>
        <div className="form-group">
          <input
            type="submit"
@@ -147,6 +148,8 @@ export default function Create() {
          />
        </div>
      </form>
+     <p></p>
+     <p>Note: this will create a cocktail that everyone who uses this website will be able to see</p>
    </div>
  );
 }

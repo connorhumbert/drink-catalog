@@ -174,6 +174,8 @@ export default function Edit() {
          />
        </div>
      </form>
+     <p></p>
+     <p>Note: this will edit the cocktail for everyone who uses this website</p>
    </div>
  );
 }
