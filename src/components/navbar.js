@@ -14,7 +14,7 @@ export default function Navbar() {
        <NavLink className="navbar-brand" to="/">
        <img style={{"width" : 25 + '%'}} src="https://m.media-amazon.com/images/I/71Vor1UJfOL._AC_SX522_.jpg"></img>
        </NavLink>
-       {/* <button
+       <button
          className="navbar-toggler"
          type="button"
          data-toggle="collapse"
@@ -24,9 +24,9 @@ export default function Navbar() {
          aria-label="Toggle navigation"
        >
          <span className="navbar-toggler-icon"></span>
-       </button> */}
+       </button>
  
-       {/* <div className="collapse navbar-collapse" id="navbarSupportedContent">
+       <div className="collapse navbar-collapse" id="navbarSupportedContent">
          <ul className="navbar-nav ml-auto">
            <li className="nav-item">
              <NavLink className="nav-link" to="/create">
@@ -34,7 +34,7 @@ export default function Navbar() {
              </NavLink>
            </li>
          </ul>
-       </div> */}
+       </div>
      </nav>
    </div>
  );

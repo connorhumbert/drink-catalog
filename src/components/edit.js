@@ -54,14 +54,13 @@ export default function Edit() {
    };
  
    // This will send a post request to update the data in the database.
-   await fetch(`https://drink-catalog-backend.onrender.com/record/update/${params.id}`, {
+   await fetch(`https://drink-catalog-backend.onrender.com/update/${params.id}`, {
      method: "POST",
      body: JSON.stringify(editedPerson),
      headers: {
        'Content-Type': 'application/json'
      },
    });
- 
    navigate("/");
  }
  
