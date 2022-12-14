@@ -24,7 +24,7 @@ export default function Create() {
    const newCocktail = { ...form };
   
  
-   await fetch("https://mern-cocktail.herokuapp.com/record/add", {
+   await fetch("https://drink-catalog-backend.onrender.com/record/add", {
      method: "POST",
      headers: {
        "Content-Type": "application/json",

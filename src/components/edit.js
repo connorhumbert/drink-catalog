@@ -14,7 +14,7 @@ export default function Edit() {
  useEffect(() => {
    async function fetchData() {
      const id = params.id.toString();
-     const response = await fetch(`https://mern-cocktail.herokuapp.com/record/${params.id.toString()}`);
+     const response = await fetch(`https://drink-catalog-backend.onrender.com/record/${params.id.toString()}`);
  
      if (!response.ok) {
        const message = `An error has occurred: ${response.statusText}`;
