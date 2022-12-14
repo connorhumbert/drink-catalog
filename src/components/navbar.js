@@ -12,7 +12,7 @@ export default function Navbar() {
    <div>
      <nav className="navbar navbar-expand-lg navbar-light bg-light">
        <NavLink className="navbar-brand" to="/">
-       <img style={{"width" : 25 + '%'}} src="https://m.media-amazon.com/images/I/71Vor1UJfOL._AC_SX522_.jpg"></img>
+       <img style={{"width" : 200}} src="https://m.media-amazon.com/images/I/71Vor1UJfOL._AC_SX522_.jpg" alt="cocktail"></img>
        </NavLink>
        {/* <button
          className="navbar-toggler"
@@ -26,15 +26,15 @@ export default function Navbar() {
          <span className="navbar-toggler-icon"></span>
        </button> */}
  
-       {/* <div className="collapse navbar-collapse" id="navbarSupportedContent">
+       <div className="collapse navbar-collapse" id="navbarSupportedContent">
          <ul className="navbar-nav ml-auto">
-           <li className="nav-item"> */}
+           <li className="nav-item">
              <NavLink className="nav-link" to="/create">
                Create Cocktail
              </NavLink>
-           {/* </li>
+           </li>
          </ul>
-       </div> */}
+       </div>
      </nav>
    </div>
  );

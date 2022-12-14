@@ -199,9 +199,9 @@ const handleDeleteFalse = () => {
       </Modal>
       <p></p>
       <p>Current Total # of Cocktails: {records.length}</p>
-      <NavLink className="nav-link" to="/create">
+      {/* <NavLink className="nav-link" to="/create">
                Create New Cocktail (Click Here)
-             </NavLink>
+             </NavLink> */}
       <p></p>
      <table className="table table-striped" style={{ marginTop: 20 }}>
        <thead>
