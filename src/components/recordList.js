@@ -46,23 +46,23 @@ export default function RecordList() {
   show: false, // initial values set to false and null
   id: null,
  } );
+
+ async function getRecords() {
+  const response = await fetch(`https://drink-catalog-backend.onrender.com/record/`);
+
+  if (!response.ok) {
+    const message = `An error occurred: ${response.statusText}`;
+    window.alert(message);
+    return;
+  }
+
+  const records = await response.json();
+  setRecords(records);
+
+}
  
  // This method fetches the records from the database.
  useEffect(() => {
-   async function getRecords() {
-     const response = await fetch(`https://drink-catalog-backend.onrender.com/record/`);
- 
-     if (!response.ok) {
-       const message = `An error occurred: ${response.statusText}`;
-       window.alert(message);
-       return;
-     }
- 
-     const records = await response.json();
-     setRecords(records);
-
-   }
- 
    getRecords();
  
    return;
@@ -199,9 +199,9 @@ const handleDeleteFalse = () => {
       </Modal>
       <p></p>
       <p>Current Total # of Cocktails: {records.length}</p>
-      {/* <NavLink className="nav-link" to="/create">
-               Create New Cocktail (Click Here)
-             </NavLink> */}
+      <Button variant="secondary" onClick={getRecords()}>
+            Force Database Refresh
+          </Button>
       <p></p>
      <table className="table table-striped" style={{ marginTop: 20 }}>
        <thead>
