@@ -199,9 +199,6 @@ const handleDeleteFalse = () => {
       </Modal>
       <p></p>
       <p>Current Total # of Cocktails: {records.length}</p>
-      <Button variant="secondary" onClick={getRecords()}>
-            Force Database Refresh
-          </Button>
       <p></p>
      <table className="table table-striped" style={{ marginTop: 20 }}>
        <thead>
