@@ -66,6 +66,7 @@ export default function RecordList() {
     return (
       <div className="loading-container">
         <div className="loading-bar"></div>
+        <p style={{marginTop: '10px'}}>Get your shaker and shot glass out while you wait, this application can take up to a minute to boot up</p>
       </div>
     );
   }
@@ -73,7 +74,7 @@ export default function RecordList() {
   if (records.length === 0) {
     // Display message when no records are available
     return (
-      <div>This Application takes up to a minute to boot up, please wait and then refresh.</div>
+      <div>There is a big ol' problem, wait up to a minute and then refresh. If nothing appears contact Connor.</div>
     );
   }
 
