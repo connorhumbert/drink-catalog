@@ -60,7 +60,7 @@ const ParentForm = ({ onSave , clearFilters}) => {
           </label>
           <button class="info-button" aria-label="Info">
             <span class="info-icon">&#9432;</span>
-            <span class="tooltip-text">Filtering by "summer" will result in drinks such as "Summer Breeze"</span>
+            <span class="tooltip-text">Filtering by "mule" will result in drinks such as "Moscow Mule" and "Mexican Mule"</span>
           </button>
         </div>
         <p></p>

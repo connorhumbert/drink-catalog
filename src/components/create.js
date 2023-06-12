@@ -42,7 +42,7 @@ export default function Create() {
  
  // This following section will display the form that takes the input from the user.
  return (
-   <div>
+   <div style={{marginLeft: '8px'}}>
      <h3>Create New Cocktail</h3>
      <form onSubmit={onSubmit}>
        <div className="form-group">
