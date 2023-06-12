@@ -31,9 +31,8 @@ export default function RecordList() {
   const [boozeType, setBoozeType] = useState("None");
   const [filterByName, setFilterByName] = useState("");
   const [filterByIngredient, setFilterByIngredient] = useState([]);
-  const [numberOfCocktailsThatMatchFilters, setNumberOfCocktailsThatMatchFilters] = useState(0);
   const [popup, setPopup] = useState({
-    show: false, // initial values set to false and null
+    show: false,
     id: null,
   });
 
@@ -56,13 +55,11 @@ export default function RecordList() {
     }
   }
 
-  // This method fetches the records from the database.
   useEffect(() => {
     getRecords();
   }, []);
 
   if (loading) {
-    // Display loading bar or spinner
     return (
       <div className="loading-container">
         <div className="loading-bar"></div>
@@ -72,13 +69,11 @@ export default function RecordList() {
   }
 
   if (records.length === 0) {
-    // Display message when no records are available
     return (
       <div>There is a big ol' problem, wait up to a minute and then refresh. If nothing appears contact Connor.</div>
     );
   }
 
-  // This method will delete a record
   async function deleteRecord(id) {
     await fetch(`https://drink-catalog-backend.onrender.com/${id}`, {
       method: "DELETE"
@@ -88,7 +83,6 @@ export default function RecordList() {
     setRecords(newRecords);
   }
 
-  // This will show the Cofirmation Box for deletion
   const handleDelete = (id) => {
     setPopup({
       show: true,
@@ -96,7 +90,6 @@ export default function RecordList() {
     });
   };
 
-  // This will perform the deletion and hide the Confirmation Box
   const handleDeleteTrue = () => {
     if (popup.show && popup.id) {
       deleteRecord(popup.id);
@@ -107,7 +100,6 @@ export default function RecordList() {
     }
   };
 
-  // This will just hide the Confirmation Box when user clicks "No"/"Cancel"
   const handleDeleteFalse = () => {
     setPopup({
       show: false,
@@ -115,15 +107,15 @@ export default function RecordList() {
     });
   };
 
-  // This method will map out the cocktails on the table
   function recordList() {
+    let filteredCocktails;
 
-    if (boozeType === "None") { //if "None", filter by name OR ingredient else show all
+    if (boozeType === "None") {
       if (filterByName !== "") {
-        return mapRecords(records.filter((el) => el.name.toLowerCase().includes(filterByName)));
+        filteredCocktails = records.filter((el) => el.name.toLowerCase().includes(filterByName));
       } else if (filterByIngredient.length > 0) {
         let tempArray = [];
-        for (var i = 0; i < records.length; i++) { // loop through objects
+        for (var i = 0; i < records.length; i++) {
           for (const [key, value] of Object.entries(records[i])) {
             if (key === "ingredients") {
               let containsAllIngredients = filterByIngredient.every(element =>
@@ -135,40 +127,43 @@ export default function RecordList() {
             }
           }
         }
-        return mapRecords(records.filter((el) => tempArray.includes(el.name)));
+        filteredCocktails = records.filter((el) => tempArray.includes(el.name));
+      } else {
+        filteredCocktails = records;
       }
-      //else
-      return mapRecords(records);
+    } else {
+      filteredCocktails = records.filter((el) => el.booze === boozeType);
     }
-    return mapRecords(records.filter((el) => el.booze === boozeType));
-  }
 
-  const mapRecords = (arr) => {
-    return arr.map((record) => {
-      return (
-        <Record
-          record={record}
-          handleDelete={() => handleDelete(record._id)}
-          key={record._id}
-        />
-      );
-    });
+    const cocktailCount = filteredCocktails.length;
+
+    return {
+      filteredCocktails,
+      cocktailCount
+    };
   }
 
   const handleSubmit = (data) => {
     setBoozeType(data.boozeType);
     setFilterByIngredient(data.ingredientTextArray);
     setFilterByName(data.nameText);
-  }
+  };
 
-  // This following section will display the table with the records of individuals.
+  const clearFilters = () => {
+    setBoozeType("None");
+    setFilterByIngredient([]);
+    setFilterByName("");
+  };
+
+  const { filteredCocktails, cocktailCount } = recordList();
+
   return (
     <div>
       <h3 style={{marginLeft: '8px'}}>Cocktail Catalog</h3>
       <p></p>
-      <ParentForm onSave={handleSubmit} />
+      <ParentForm onSave={handleSubmit} clearFilters={clearFilters}/>
       <p></p>
-      <p>Total # of Cocktails: {records.length}</p>
+      <p style={{ padding: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Number of Cocktails Currently Displayed: {cocktailCount}</p>
       <p></p>
 
       <Modal show={popup.show} onHide={handleDeleteFalse}>
@@ -192,7 +187,15 @@ export default function RecordList() {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>{recordList()}</tbody>
+        <tbody>
+          {filteredCocktails.map((record) => (
+            <Record
+              record={record}
+              handleDelete={() => handleDelete(record._id)}
+              key={record._id}
+            />
+          ))}
+        </tbody>
       </table>
     </div>
   );

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './ParentForm.css';
 
-const ParentForm = ({ onSave }) => {
+const ParentForm = ({ onSave , clearFilters}) => {
   const [ingredientTextArray, setIngredientTextArray] = useState([]);
   const [nameText, setNameText] = useState("");
   const [boozeType, setBoozeType] = useState("None");
@@ -32,6 +32,8 @@ const ParentForm = ({ onSave }) => {
     setIngredientTextArray([]);
     setNameText("");
     setBoozeType("None")
+
+    clearFilters()
   };
 
   return (
