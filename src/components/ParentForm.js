@@ -22,11 +22,6 @@ const ParentForm = ({ onSave, clearFilters }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Perform the necessary actions with the submitted data
-    console.log(nameText);
-    console.log(ingredientTextArray);
-    console.log(boozeType);
     onSave({ nameText, ingredientTextArray, boozeType })
   };
 
