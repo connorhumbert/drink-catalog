@@ -81,8 +81,8 @@ const ParentForm = ({ onSave, clearFilters }) => {
         </div>
         <p></p>
         <div className="button-container">
-          <input type="submit" value="Submit" className="btn btn-outline-primary" style={{ marginRight: '10px', marginLeft: '65px' }} />
-          <button type="button" onClick={handleClear} className="btn btn-outline-secondary" >Clear</button>
+        <button type="button" onClick={handleClear} className="btn btn-outline-secondary" style={{ marginRight: '10px', marginLeft: '75px' }}>Clear</button>
+          <input type="submit" value="Submit" className="btn btn-outline-primary"  />
         </div>
       </form>
     </div>
