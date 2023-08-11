@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './ParentForm.css';
 
-const ParentForm = ({ onSave , clearFilters}) => {
+const ParentForm = ({ onSave, clearFilters }) => {
   const [ingredientTextArray, setIngredientTextArray] = useState([]);
   const [nameText, setNameText] = useState("");
   const [boozeType, setBoozeType] = useState("None");
@@ -24,6 +24,9 @@ const ParentForm = ({ onSave , clearFilters}) => {
     e.preventDefault();
 
     // Perform the necessary actions with the submitted data
+    console.log(nameText);
+    console.log(ingredientTextArray);
+    console.log(boozeType);
     onSave({ nameText, ingredientTextArray, boozeType })
   };
 
@@ -55,12 +58,12 @@ const ParentForm = ({ onSave , clearFilters}) => {
               value={nameText}
               onChange={(e) => setNameText(e.target.value)}
               placeholder={"Enter Name"}
-              style={{ width: '300px' }} // Apply inline style to set the width
+              style={{ width: '300px' }}
             />
           </label>
-          <button class="info-button" aria-label="Info">
-            <span class="info-icon">&#9432;</span>
-            <span class="tooltip-text">Filtering by "mule" will result in drinks such as "Moscow Mule" and "Mexican Mule"</span>
+          <button className="info-button" aria-label="Info" style={{ marginTop: '25px' }}>
+            <span className="info-icon">&#9432;</span>
+            <span className="tooltip-text">Filtering by "mule" will result in drinks such as "Moscow Mule" and "Mexican Mule"</span>
           </button>
         </div>
         <p></p>
@@ -73,12 +76,12 @@ const ParentForm = ({ onSave , clearFilters}) => {
               value={ingredientTextArray.join(', ')}
               onChange={(e) => setIngredientTextArray(e.target.value.split(', '))}
               placeholder={"Enter Comma Seperated List"}
-              style={{ width: '300px' }} // Apply inline style to set the width
+              style={{ width: '300px' }}
             />
           </label>
-          <button class="info-button" aria-label="Info">
-            <span class="info-icon">&#9432;</span>
-            <span class="tooltip-text">Filtering by "orange juice, lime" will result in drinks such as "Painkiller"</span>
+          <button className="info-button" aria-label="Info" style={{ marginTop: '25px' }}>
+            <span className="info-icon">&#9432;</span>
+            <span className="tooltip-text">Filtering by "orange juice, lime" will result in drinks such as "Painkiller"</span>
           </button>
         </div>
         <p></p>

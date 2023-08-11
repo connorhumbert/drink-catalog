@@ -61,9 +61,9 @@ export default function RecordList() {
 
   if (loading) {
     return (
-      <div className="loading-container">
+      <div className="loading-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div className="loading-bar"></div>
-        <p style={{marginTop: '10px'}}>Get your shaker and shot glass out while you wait, this application can take up to a minute to boot up</p>
+        <p style={{ marginTop: '10px' }}>Get your shaker and shot glass out while you wait, this application can take up to a minute to boot up</p>
       </div>
     );
   }
@@ -108,31 +108,28 @@ export default function RecordList() {
   };
 
   function recordList() {
-    let filteredCocktails;
-
-    if (boozeType === "None") {
-      if (filterByName !== "") {
-        filteredCocktails = records.filter((el) => el.name.toLowerCase().includes(filterByName));
-      } else if (filterByIngredient.length > 0) {
-        let tempArray = [];
-        for (var i = 0; i < records.length; i++) {
-          for (const [key, value] of Object.entries(records[i])) {
-            if (key === "ingredients") {
-              let containsAllIngredients = filterByIngredient.every(element =>
-                value.some(item => item.includes(element))
-              );
-              if (containsAllIngredients) {
-                tempArray.push(records[i].name);
-              }
+    let filteredCocktails = records.slice(); //copy of records
+    if (filterByName !== "") {
+      filteredCocktails = filteredCocktails.filter((el) => el.name.toLowerCase().includes(filterByName));
+    }
+    if (filterByIngredient.length > 0) {
+      let tempArray = [];
+      for (var i = 0; i < records.length; i++) {
+        for (const [key, value] of Object.entries(records[i])) {
+          if (key === "ingredients") {
+            let containsAllIngredients = filterByIngredient.every(element =>
+              value.some(item => item.includes(element))
+            );
+            if (containsAllIngredients) {
+              tempArray.push(records[i].name);
             }
           }
         }
-        filteredCocktails = records.filter((el) => tempArray.includes(el.name));
-      } else {
-        filteredCocktails = records;
       }
-    } else {
-      filteredCocktails = records.filter((el) => el.booze === boozeType);
+      filteredCocktails = filteredCocktails.filter((el) => tempArray.includes(el.name));
+    }
+    if (boozeType !== "None") {
+      filteredCocktails = filteredCocktails.filter((el) => el.booze === boozeType);
     }
 
     const cocktailCount = filteredCocktails.length;
@@ -159,12 +156,12 @@ export default function RecordList() {
 
   return (
     <div>
-      <h3 style={{marginLeft: '8px'}}>Cocktail Catalog</h3>
+      <h3 style={{ marginLeft: '8px' }}>Cocktail Catalog</h3>
       <p></p>
-      <ParentForm onSave={handleSubmit} clearFilters={clearFilters}/>
-      <p></p>
-      <p style={{ padding: '10px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Number of Cocktails Currently Displayed: {cocktailCount}</p>
-      <p></p>
+      <ParentForm onSave={handleSubmit} clearFilters={clearFilters} />
+      <div style={{ padding: '20px 10px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        Number of Cocktails Currently Displayed: {cocktailCount}
+      </div>
 
       <Modal show={popup.show} onHide={handleDeleteFalse}>
         <Modal.Header closeButton></Modal.Header>

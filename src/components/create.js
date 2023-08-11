@@ -53,6 +53,7 @@ export default function Create() {
            id="name"
            value={form.name}
            onChange={(e) => updateForm({ name: e.target.value })}
+           required
          />
        </div>
        <div className="form-group">
@@ -63,6 +64,7 @@ export default function Create() {
            id="ingredients"
            value={form.ingredients}
            onChange={(e) => updateForm({ ingredients: e.target.value })}
+           required
          />
        </div>
        <div className="form-group">
