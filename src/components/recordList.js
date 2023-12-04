@@ -25,8 +25,8 @@ const Record = (props) => (
   </tr>
 );
 
-export default function RecordList() {
-  const [loading, setLoading] = useState(true);
+export default function RecordList({ setLoading }) {
+  const [loading, setLocalLoading] = useState(true); // Local loading state within RecordList
   const [records, setRecords] = useState([]);
   const [boozeType, setBoozeType] = useState("None");
   const [filterByName, setFilterByName] = useState("");
@@ -38,6 +38,7 @@ export default function RecordList() {
 
   async function getRecords() {
     try {
+      //const startTime = new Date().getTime(); // Capture the start time
       const response = await fetch(`https://drink-catalog-backend.onrender.com/record/`);
 
       if (!response.ok) {
@@ -47,11 +48,17 @@ export default function RecordList() {
       }
 
       const records = await response.json();
+      /* get the api response time - as of Dec 4th 2023 there are 127 cocktails and response time is 201ms
+       const endTime = new Date().getTime(); // Capture the end time when the response is received
+       const duration = endTime - startTime; // Calculate the duration in milliseconds
+       console.log(`Time taken: ${duration}ms`);
+      */
       setRecords(records);
     } catch (error) {
       console.error("Error fetching records:", error);
     } finally {
       setLoading(false);
+      setLocalLoading(false);
     }
   }
 
@@ -62,8 +69,10 @@ export default function RecordList() {
   if (loading) {
     return (
       <div className="loading-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div className="loading-bar"></div>
-        <p style={{ marginTop: '10px' }}>Get your shaker and shot glass out while you wait, this application can take up to a minute to boot up</p>
+        <div className="spinner-border text-primary" role="status" style={{ width: '3rem', height: '3rem' }}>
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <p style={{ marginTop: '10px' }}>Get your shaker and shot glass out while you wait, this application can take up to a minute to come online</p>
       </div>
     );
   }
@@ -110,7 +119,7 @@ export default function RecordList() {
   function recordList() {
     let filteredCocktails = records.slice(); //copy of records
     if (filterByName !== "") {
-      filteredCocktails = filteredCocktails.filter((el) => el.name.toLowerCase().includes(filterByName));
+      filteredCocktails = filteredCocktails.filter((el) => el.name.toLowerCase().includes(filterByName.toLowerCase()));
     }
     if (filterByIngredient.length > 0) {
       let tempArray = [];
@@ -118,7 +127,7 @@ export default function RecordList() {
         for (const [key, value] of Object.entries(records[i])) {
           if (key === "ingredients") {
             let containsAllIngredients = filterByIngredient.every(element =>
-              value.some(item => item.includes(element))
+              value.some(item => item.toLowerCase().includes(element.toLowerCase()))
             );
             if (containsAllIngredients) {
               tempArray.push(records[i].name);

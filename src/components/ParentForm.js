@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './ParentForm.css';
 
 const ParentForm = ({ onSave, clearFilters }) => {
-  const [ingredientTextArray, setIngredientTextArray] = useState([]);
+  const [ingredientTextString, setIngredientTextString] = useState("");
   const [nameText, setNameText] = useState("");
   const [boozeType, setBoozeType] = useState("None");
 
@@ -22,12 +22,19 @@ const ParentForm = ({ onSave, clearFilters }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    let ingredientTextArray = [];
+    if (ingredientTextString.length !== 0) {
+      ingredientTextArray = ingredientTextString
+        .split(',')
+        .map(ingredient => ingredient.trim())
+        .filter(ingredient => ingredient !== '');
+    }
     onSave({ nameText, ingredientTextArray, boozeType })
   };
 
   const handleClear = () => {
     // Clear the form inputs
-    setIngredientTextArray([]);
+    setIngredientTextString([]);
     setNameText("");
     setBoozeType("None")
 
@@ -68,8 +75,8 @@ const ParentForm = ({ onSave, clearFilters }) => {
             <input
               className="form-control"
               type="text"
-              value={ingredientTextArray.join(', ')}
-              onChange={(e) => setIngredientTextArray(e.target.value.split(', '))}
+              value={ingredientTextString}
+              onChange={(e) => setIngredientTextString(e.target.value)}
               placeholder={"Enter Comma Seperated List"}
               style={{ width: '300px' }}
             />

@@ -12,7 +12,6 @@ const Form = ({ nameForm, onSave }) => {
     }
 
     onSave({ text: textArray });
-    console.log(textArray);
     setTextArray([]);
   };
 
