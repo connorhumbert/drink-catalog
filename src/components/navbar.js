@@ -6,14 +6,16 @@ export default function Navbar({ loading }) {
     <div>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <NavLink className="navbar-brand" to="/">
-          <img style={{ "width": 200 }} src="https://m.media-amazon.com/images/I/71Vor1UJfOL._AC_SX522_.jpg" alt="cocktail"></img>
+          <img style={{ maxWidth: '150px', height: 'auto' }} src="https://m.media-amazon.com/images/I/71Vor1UJfOL._AC_SX522_.jpg" alt="cocktail"></img>
         </NavLink>
 
         {!loading && (
+        <div className="navbar-nav ml-auto">
           <NavLink className="nav-link" to="/create" style={{ color: 'blue', textDecoration: 'underline' }}>
             Create New Cocktail
           </NavLink>
-        )}
+        </div>
+      )}
 
       </nav>
     </div>

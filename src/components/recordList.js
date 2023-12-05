@@ -164,11 +164,11 @@ export default function RecordList({ setLoading }) {
   const { filteredCocktails, cocktailCount } = recordList();
 
   return (
-    <div>
-      <h3 style={{ marginLeft: '8px' }}>Cocktail Catalog</h3>
+    <div style={{ padding: '10px' }}>
+      <h3 style={{ textAlign: 'center', fontSize: '1.5rem' }}>Cocktail Catalog</h3>
       <p></p>
       <ParentForm onSave={handleSubmit} clearFilters={clearFilters} />
-      <div style={{ padding: '20px 10px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <div style={{ textAlign: 'center', marginTop: '10px' }}>
         Number of Cocktails Currently Displayed: {cocktailCount}
       </div>
 
@@ -184,25 +184,28 @@ export default function RecordList({ setLoading }) {
           </Button>
         </Modal.Footer>
       </Modal>
-      <table className="table table-striped" style={{ marginTop: 20 }}>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Booze</th>
-            <th>Ingredients</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredCocktails.map((record) => (
-            <Record
-              record={record}
-              handleDelete={() => handleDelete(record._id)}
-              key={record._id}
-            />
-          ))}
-        </tbody>
-      </table>
+
+      <div style={{ overflowX: 'auto', marginTop: '20px' }}>
+        <table className="table table-striped" style={{ minWidth: '300px' }}>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Booze</th>
+              <th>Ingredients</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredCocktails.map((record) => (
+              <Record
+                record={record}
+                handleDelete={() => handleDelete(record._id)}
+                key={record._id}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

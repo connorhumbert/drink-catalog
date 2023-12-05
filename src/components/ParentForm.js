@@ -12,8 +12,8 @@ const ParentForm = ({ onSave, clearFilters }) => {
 
   const options = [
     { label: 'None', value: 'None' },
-    { label: 'Tequila', value: 'Tequila' },
     { label: 'Whiskey/Rye/Bourbon', value: "Whiskey/Rye/Bourbon" },
+    { label: 'Tequila', value: 'Tequila' },
     { label: 'Rum', value: 'Rum' },
     { label: 'Gin', value: 'Gin' },
     { label: 'Vodka', value: 'Vodka' },
