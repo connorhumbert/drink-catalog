@@ -68,11 +68,11 @@ export default function RecordList({ setLoading }) {
 
   if (loading) {
     return (
-      <div className="loading-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div className="loading-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
         <div className="spinner-border text-primary" role="status" style={{ width: '3rem', height: '3rem' }}>
           <span className="visually-hidden">Loading...</span>
         </div>
-        <p style={{ marginTop: '10px' }}>Get your shaker and shot glass out while you wait, this application can take up to a minute to come online</p>
+        <p style={{ marginTop: '10px', textAlign: 'center' }}>Get your shaker and shot glass out while you wait, this application can take up to a minute to come online</p>
       </div>
     );
   }
