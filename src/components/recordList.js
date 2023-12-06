@@ -64,16 +64,14 @@ export default function RecordList({ setLoading }) {
 
   useEffect(() => {
     getRecords();
-  }, []);
+  });
 
   if (loading) {
     return (
-      <div className="loading-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
-        <div className="spinner-border text-primary" role="status" style={{ width: '3rem', height: '3rem' }}>
-          <span className="visually-hidden">Loading...</span>
-        </div>
-        <p style={{ marginTop: '10px', textAlign: 'center' }}>Get your shaker and shot glass out while you wait, this application can take up to a minute to come online</p>
-      </div>
+      <div className="loading-container">
+      <div className="custom-spinner"></div>
+      <p>Get your shaker and shot glass out while you wait, this application can take up to a minute to come online</p>
+    </div>
     );
   }
 
@@ -186,7 +184,7 @@ export default function RecordList({ setLoading }) {
       </Modal>
 
       <div style={{ overflowX: 'auto', marginTop: '20px' }}>
-        <table className="table table-striped" style={{ minWidth: '300px' }}>
+        <table className="table table-striped">
           <thead>
             <tr>
               <th>Name</th>

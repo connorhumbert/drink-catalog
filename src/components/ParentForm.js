@@ -11,7 +11,7 @@ const ParentForm = ({ onSave, clearFilters }) => {
   };
 
   const options = [
-    { label: 'None', value: 'None' },
+    { label: 'No Selection', value: 'None' },
     { label: 'Whiskey/Rye/Bourbon', value: "Whiskey/Rye/Bourbon" },
     { label: 'Tequila', value: 'Tequila' },
     { label: 'Rum', value: 'Rum' },
@@ -65,7 +65,7 @@ const ParentForm = ({ onSave, clearFilters }) => {
           </label>
           <button className="info-button" aria-label="Info" style={{ marginTop: '25px' }}>
             <span className="info-icon">&#9432;</span>
-            <span className="tooltip-text">Filtering by "mule" will result in drinks such as "Moscow Mule" and "Mexican Mule"</span>
+            <span className="tooltip-text">Filtering by "Smash" will result in drinks such as "Whiskey Smash" and "Blueberry Smash"</span>
           </button>
         </div>
         <p></p>
