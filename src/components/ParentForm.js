@@ -60,7 +60,6 @@ const ParentForm = ({ onSave, clearFilters }) => {
               value={nameText}
               onChange={(e) => setNameText(e.target.value)}
               placeholder={"Enter Name"}
-              style={{ width: '300px' }}
             />
           </label>
           <button className="info-button" aria-label="Info" style={{ marginTop: '25px' }}>
@@ -78,7 +77,6 @@ const ParentForm = ({ onSave, clearFilters }) => {
               value={ingredientTextString}
               onChange={(e) => setIngredientTextString(e.target.value)}
               placeholder={"Enter Comma Seperated List"}
-              style={{ width: '300px' }}
             />
           </label>
           <button className="info-button" aria-label="Info" style={{ marginTop: '25px' }}>

@@ -9,18 +9,16 @@ const Record = (props) => (
   <tr>
     <td>{props.record.name}</td>
     <td>{props.record.booze}</td>
-    <td>{props.record.ingredients?.map((list, index) =>
-      <li key={index}>{list}</li>
-    )}</td>
+    <td>
+      <ul>
+        {props.record.ingredients?.map((ingredient, index) => (
+          <li key={index}>{ingredient}</li>
+        ))}
+      </ul>
+    </td>
     <td>
       <Link className="btn btn-link" to={`/edit/${props.record._id}`}>Edit</Link> |
-      <button className="btn btn-link"
-        onClick={() => {
-          props.handleDelete(props.record._id);
-        }}
-      >
-        Delete
-      </button>
+      <button className="btn btn-link" onClick={() => props.handleDelete(props.record._id)}>Delete</button>
     </td>
   </tr>
 );
@@ -64,14 +62,15 @@ export default function RecordList({ setLoading }) {
 
   useEffect(() => {
     getRecords();
-  });
+    // eslint-disable-next-line
+  }, []);
 
   if (loading) {
     return (
       <div className="loading-container">
-      <div className="custom-spinner"></div>
-      <p>Get your shaker and shot glass out while you wait, this application can take up to a minute to come online</p>
-    </div>
+        <div className="custom-spinner"></div>
+        <p>Get your shaker and shot glass out while you wait, this application can take up to a minute to come online</p>
+      </div>
     );
   }
 
@@ -162,12 +161,12 @@ export default function RecordList({ setLoading }) {
   const { filteredCocktails, cocktailCount } = recordList();
 
   return (
-    <div style={{ padding: '10px' }}>
+    <div style={{ padding: '5px' }}>
       <h3 style={{ textAlign: 'center', fontSize: '1.5rem' }}>Cocktail Catalog</h3>
       <p></p>
       <ParentForm onSave={handleSubmit} clearFilters={clearFilters} />
-      <div style={{ textAlign: 'center', marginTop: '10px' }}>
-        Number of Cocktails Currently Displayed: {cocktailCount}
+      <div class style={{ textAlign: 'center', marginTop: '10px' }}>
+        <label>Number of Cocktails Currently Displayed: {cocktailCount} </label>
       </div>
 
       <Modal show={popup.show} onHide={handleDeleteFalse}>
@@ -184,7 +183,13 @@ export default function RecordList({ setLoading }) {
       </Modal>
 
       <div style={{ overflowX: 'auto', marginTop: '20px' }}>
-        <table className="table table-striped">
+        <table className="table table-striped" style={{ minWidth: '300px' }}>
+          <colgroup>
+            <col style={{ width: '25%' }} />
+            <col style={{ width: '25%' }} />
+            <col style={{ width: '25%' }} />
+            <col style={{ width: '25%' }} />
+          </colgroup>
           <thead>
             <tr>
               <th>Name</th>

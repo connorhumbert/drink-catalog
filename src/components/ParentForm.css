@@ -1,44 +1,61 @@
+.info-button {
+  position: relative;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+}
 
- .info-button {
-    position: relative;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    padding: 0;
-  }
-  
-  .info-icon {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
-    text-align: center;
-    background-color: #f0f0f0;
-    border-radius: 50%;
-  }
-  
-  .tooltip-text {
-    width: 200px;
-    visibility: hidden;
-    background-color: #000;
-    color: #fff;
-    text-align: center;
-    border-radius: 5px;
-    padding: 5px;
-    position: absolute;
-    z-index: 1;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
+.info-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  background-color: #f0f0f0;
+  border-radius: 50%;
+}
+
+.tooltip-text {
+  width: 200px;
+  visibility: hidden;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  font-size: 12px;
+}
+
+.info-button:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+input.form-control {
+  width: 300px;
+}
+
+/* CSS for smaller screens (e.g., mobile devices) */
+@media (max-width: 768px) {
+  label {
     font-size: 12px;
   }
-  
-  .info-button:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
+  .btn {
+    font-size: 12px !important; 
+
   }
-
-
+  input.form-control {
+    font-size: 12px;
+    /* padding: 8px;*/
+    width: 200px; 
+  } 
+}
