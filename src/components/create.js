@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import './edit&create.css';
 
 export default function Create() {
   const [form, setForm] = useState({
