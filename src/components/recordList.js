@@ -45,13 +45,13 @@ export default function RecordList({ setLoading }) {
         return;
       }
 
-      const records = await response.json();
+      let records = await response.json();
       /* get the api response time - as of Dec 4th 2023 there are 127 cocktails and response time is 201ms
        const endTime = new Date().getTime(); // Capture the end time when the response is received
        const duration = endTime - startTime; // Calculate the duration in milliseconds
        console.log(`Time taken: ${duration}ms`);
       */
-      setRecords(records);
+      setRecords(records.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
     } catch (error) {
       console.error("Error fetching records:", error);
     } finally {
@@ -115,6 +115,9 @@ export default function RecordList({ setLoading }) {
 
   function recordList() {
     let filteredCocktails = records.slice(); //copy of records
+    if (boozeType !== "None") {
+      filteredCocktails = filteredCocktails.filter((el) => el.booze === boozeType);
+    }
     if (filterByName !== "") {
       filteredCocktails = filteredCocktails.filter((el) => el.name.toLowerCase().includes(filterByName.toLowerCase()));
     }
@@ -133,9 +136,6 @@ export default function RecordList({ setLoading }) {
         }
       }
       filteredCocktails = filteredCocktails.filter((el) => tempArray.includes(el.name));
-    }
-    if (boozeType !== "None") {
-      filteredCocktails = filteredCocktails.filter((el) => el.booze === boozeType);
     }
 
     const cocktailCount = filteredCocktails.length;
