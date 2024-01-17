@@ -33,7 +33,6 @@ const ParentForm = ({ onSave, clearFilters }) => {
   };
 
   const handleClear = () => {
-    // Clear the form inputs
     setIngredientTextString([]);
     setNameText("");
     setBoozeType("None")
@@ -53,33 +52,31 @@ const ParentForm = ({ onSave, clearFilters }) => {
           </select>
         </label>
         <p></p>
-        <div className="input-group">
-          <label style={{ marginRight: '10px' }}>  {"Filter by Name of Cocktail "}
-            <input className="form-control"
-              type="text"
-              value={nameText}
-              onChange={(e) => setNameText(e.target.value)}
-              placeholder={"Enter Name"}
-            />
-          </label>
-          <button className="info-button" aria-label="Info" style={{ marginTop: '25px' }}>
+        <label>  {"Filter by Name of Cocktail "}          </label>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <input className="form-control"
+            type="text"
+            value={nameText}
+            onChange={(e) => setNameText(e.target.value)}
+            placeholder={"Enter Name"}
+          />
+
+          <button className="info-button" aria-label="Info" style={{ marginLeft: '10px' }}>
             <span className="info-icon">&#9432;</span>
             <span className="tooltip-text">Filtering by "Smash" will result in drinks such as "Whiskey Smash" and "Blueberry Smash"</span>
           </button>
         </div>
         <p></p>
-        <div className="input-group">
-          <label style={{ marginRight: '10px', alignSelf: 'center' }}>
-            {"Filter by Ingredients"}
-            <input
-              className="form-control"
-              type="text"
-              value={ingredientTextString}
-              onChange={(e) => setIngredientTextString(e.target.value)}
-              placeholder={"Enter Comma Seperated List"}
-            />
-          </label>
-          <button className="info-button" aria-label="Info" style={{ marginTop: '25px' }}>
+        <label>{"Filter by Ingredients"}</label>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <input
+            className="form-control"
+            type="text"
+            value={ingredientTextString}
+            onChange={(e) => setIngredientTextString(e.target.value)}
+            placeholder={"Enter Comma Separated List"}
+          />
+          <button className="info-button" aria-label="Info" style={{ marginLeft: '10px' }}>
             <span className="info-icon">&#9432;</span>
             <span className="tooltip-text">Filtering by "orange juice, lime" will result in drinks such as "Painkiller"</span>
           </button>
