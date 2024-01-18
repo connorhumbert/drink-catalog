@@ -45,15 +45,15 @@ export default function RecordList({ setLoading }) {
         return;
       }
 
-      let records = await response.json();
-      /* get the api response time - as of Dec 4th 2023 there are 127 cocktails and response time is 201ms
+      const records = await response.json();
+      /* get the api response time - as of Dec 4th 2023 there are 127 cocktails and response time is 201ms.
        const endTime = new Date().getTime(); // Capture the end time when the response is received
        const duration = endTime - startTime; // Calculate the duration in milliseconds
        console.log(`Time taken: ${duration}ms`);
       */
-      setRecords(records.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())));
+      setRecords(records);
     } catch (error) {
-      console.error("Error fetching records:", error);
+      console.error("Error fetching cocktail recipes:", error);
     } finally {
       setLoading(false);
       setLocalLoading(false);
