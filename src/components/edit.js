@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 import './edit&create.css';
 import { getDrink, updateDrink } from "../drinksApi";
 
@@ -32,7 +33,7 @@ export default function Edit() {
         return;
       }
       let editedRecord = record;
-      editedRecord.ingredients = Object.values(record.ingredients).join(',');
+      editedRecord.ingredients = Object.values(record.ingredients).join(', ');
       setForm(editedRecord);
     }
 
@@ -59,11 +60,12 @@ export default function Edit() {
   }
 
   return (
-    <div style={{ marginLeft: '8px' }}>
-      <h3>Update Cocktail</h3>
+    <div className="form-page">
+      <Link className="back-link" to="/">← Back</Link>
+      <h2>Update Cocktail</h2>
       <form onSubmit={onSubmit}>
         <div className="form-group">
-          <label htmlFor="name">Name: </label>
+          <label htmlFor="name">Name</label>
           <input
             type="text"
             className="form-control"
@@ -73,9 +75,9 @@ export default function Edit() {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="ingredients">Ingredients (Comma-separated)</label>
-          <input
-            type="text"
+          <label htmlFor="ingredients">Ingredients (separate with commas)</label>
+          <textarea
+            rows={4}
             className="form-control"
             id="ingredients"
             value={form.ingredients}
@@ -83,31 +85,29 @@ export default function Edit() {
           />
         </div>
         <div className="form-group">
-          <label>Booze</label>
-          <div style={{ marginBottom: '10px' }}>
+          <label>Booze Type</label>
+          <div className="pill-group">
             {boozeOptions.map((option) => (
-              <div className="form-check" key={option.value} style={{ marginBottom: '5px' }}>
+              <div className="pill" key={option.value}>
                 <input
-                  className="form-check-input"
                   type="radio"
                   name="boozeOptions"
                   id={`booze${option.label}`}
                   value={option.value}
                   checked={form.booze === option.value}
                   onChange={(e) => updateForm({ booze: e.target.value })}
+                  
                 />
-                <label htmlFor={`booze${option.label}`} className="form-check-label" style={{ marginLeft: '5px' }}>
-                  {option.label}
-                </label>
+                <label htmlFor={`booze${option.label}`}>{option.label}</label>
               </div>
             ))}
           </div>
         </div>
         <div className="form-group">
-          <input type="submit" value="Update Cocktail" className="btn btn-primary btn-block" />
+          <button type="submit" className="btn-accent">Update Cocktail</button>
         </div>
       </form>
-      <p style={{ marginTop: '10px' }}>Note: This will edit the cocktail for everyone who uses this website.</p>
+      <p className="form-note">Note: This will edit the cocktail for everyone who uses this website.</p>
     </div>
   );
 }

@@ -1,0 +1,116 @@
+.drink-card {
+  --b: var(--accent);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--b);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.drink-card[data-booze="Whiskey/Rye/Bourbon"] { --b: #c8803a; }
+.drink-card[data-booze="Gin"] { --b: #6fb3a0; }
+.drink-card[data-booze="Rum"] { --b: #b5594a; }
+.drink-card[data-booze="Tequila"] { --b: #b8c75a; }
+.drink-card[data-booze="Vodka"] { --b: #8fa8d0; }
+.drink-card[data-booze="Wine"] { --b: #a84a68; }
+
+.drink-card.open {
+  background: var(--surface-2);
+}
+
+.drink-card-head {
+  display: block;
+  width: 100%;
+  padding: 14px 14px 12px;
+  background: none;
+  border: 0;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.drink-card-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.drink-name {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.booze-badge {
+  flex: none;
+  color: var(--b);
+  border: 1px solid var(--b);
+  border-radius: 999px;
+  padding: 1px 9px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.drink-preview {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.drink-body {
+  padding: 0 14px 14px;
+}
+
+.drink-ingredients {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+
+.drink-ingredients li {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.drink-ingredients li.garnish {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.drink-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.card-action {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.card-action.danger {
+  color: var(--danger);
+}

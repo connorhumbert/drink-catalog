@@ -1,35 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import ParentForm from "./ParentForm";
+import Fuse from "fuse.js";
+import DrinkCard from "./DrinkCard";
+import SearchBar from "./SearchBar";
 import { getDrinks, deleteDrink } from "../drinksApi";
+import { buildSuggestions, hasIngredient, ingredientName, isGarnish, normalize } from "../ingredients";
 import "./RecordList.css";
-
-const Record = (props) => (
-  <tr>
-    <td>{props.record.name}</td>
-    <td>{props.record.booze}</td>
-    <td>
-      <ul>
-        {props.record.ingredients?.map((ingredient, index) => (
-          <li key={index}>{ingredient}</li>
-        ))}
-      </ul>
-    </td>
-    <td>
-      <Link className="btn btn-link" to={`/edit/${props.record._id}`}>Edit</Link> |
-      <button className="btn btn-link" onClick={() => props.handleDelete(props.record._id)}>Delete</button>
-    </td>
-  </tr>
-);
 
 export default function RecordList({ setLoading }) {
   const [loading, setLocalLoading] = useState(true); // Local loading state within RecordList
   const [records, setRecords] = useState([]);
   const [boozeType, setBoozeType] = useState("None");
-  const [filterByName, setFilterByName] = useState("");
-  const [filterByIngredient, setFilterByIngredient] = useState([]);
+  const [query, setQuery] = useState("");
+  const [ingredientTags, setIngredientTags] = useState([]);
+  const [openId, setOpenId] = useState(null);
   const [popup, setPopup] = useState({
     show: false,
     id: null,
@@ -52,6 +37,39 @@ export default function RecordList({ setLoading }) {
     // eslint-disable-next-line
   }, []);
 
+  const suggestions = useMemo(() => buildSuggestions(records), [records]);
+
+  const filteredCocktails = useMemo(() => {
+    let results = records;
+    if (boozeType !== "None") {
+      results = results.filter((el) => el.booze === boozeType);
+    }
+    if (ingredientTags.length > 0) {
+      results = results.filter((el) => ingredientTags.every((tag) => hasIngredient(el.ingredients, tag)));
+    }
+    const text = query.trim();
+    if (text.length > 0) {
+      const searchable = results.map((el) => ({
+        record: el,
+        name: normalize(el.name),
+        booze: normalize(el.booze || ""),
+        ingredients: (el.ingredients || []).filter((item) => !isGarnish(item)).map((item) => normalize(ingredientName(item))),
+      }));
+      const fuse = new Fuse(searchable, {
+        keys: [
+          { name: "name", weight: 0.6 },
+          { name: "ingredients", weight: 0.3 },
+          { name: "booze", weight: 0.1 },
+        ],
+        threshold: 0.3,
+        ignoreLocation: true,
+        minMatchCharLength: 2,
+      });
+      results = fuse.search(normalize(text)).map((hit) => hit.item.record);
+    }
+    return results;
+  }, [records, boozeType, ingredientTags, query]);
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -63,7 +81,7 @@ export default function RecordList({ setLoading }) {
 
   if (records.length === 0) {
     return (
-      <div>There is a big ol' problem, wait up to a minute and then refresh. If nothing appears contact Connor.</div>
+      <div className="empty-state">There is a big ol' problem, wait up to a minute and then refresh. If nothing appears contact Connor.</div>
     );
   }
 
@@ -98,64 +116,27 @@ export default function RecordList({ setLoading }) {
     });
   };
 
-  function recordList() {
-    let filteredCocktails = records.slice(); //copy of records
-    if (boozeType !== "None") {
-      filteredCocktails = filteredCocktails.filter((el) => el.booze === boozeType);
-    }
-    if (filterByName !== "") {
-      filteredCocktails = filteredCocktails.filter((el) => el.name.toLowerCase().includes(filterByName.toLowerCase()));
-    }
-    if (filterByIngredient.length > 0) {
-      let tempArray = [];
-      for (var i = 0; i < records.length; i++) {
-        for (const [key, value] of Object.entries(records[i])) {
-          if (key === "ingredients") {
-            let containsAllIngredients = filterByIngredient.every(element =>
-              value.some(item => item.toLowerCase().includes(element.toLowerCase()))
-            );
-            if (containsAllIngredients) {
-              tempArray.push(records[i].name);
-            }
-          }
-        }
-      }
-      filteredCocktails = filteredCocktails.filter((el) => tempArray.includes(el.name));
-    }
-
-    const cocktailCount = filteredCocktails.length;
-
-    return {
-      filteredCocktails,
-      cocktailCount
-    };
-  }
-
-  const handleSubmit = (data) => {
-    setBoozeType(data.boozeType);
-    setFilterByIngredient(data.ingredientTextArray);
-    setFilterByName(data.nameText);
-  };
-
   const clearFilters = () => {
     setBoozeType("None");
-    setFilterByIngredient([]);
-    setFilterByName("");
+    setIngredientTags([]);
+    setQuery("");
   };
 
-  const { filteredCocktails, cocktailCount } = recordList();
-
   return (
-    <div style={{ padding: '5px' }}>
-      <h3 style={{ textAlign: 'center', fontSize: '1.5rem' }}>Cocktail Catalog</h3>
-      <p></p>
-      <ParentForm onSave={handleSubmit} clearFilters={clearFilters} />
-      <div class style={{ textAlign: 'center', marginTop: '10px' }}>
-        <label>Number of Cocktails Currently Displayed: {cocktailCount} </label>
-      </div>
+    <div className="page">
+      <SearchBar
+        query={query}
+        setQuery={setQuery}
+        booze={boozeType}
+        setBooze={setBoozeType}
+        tags={ingredientTags}
+        setTags={setIngredientTags}
+        suggestions={suggestions}
+        count={filteredCocktails.length}
+        onClear={clearFilters}
+      />
 
-      <Modal show={popup.show} onHide={handleDeleteFalse}>
-        <Modal.Header closeButton></Modal.Header>
+      <Modal show={popup.show} onHide={handleDeleteFalse} centered contentClassName="dark-modal">
         <Modal.Body>This will delete the cocktail for everyone that uses this website, are you sure you want to continue?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleDeleteFalse}>
@@ -167,33 +148,19 @@ export default function RecordList({ setLoading }) {
         </Modal.Footer>
       </Modal>
 
-      <div style={{ overflowX: 'auto', marginTop: '20px' }}>
-        <table className="table table-striped" style={{ minWidth: '300px' }}>
-          <colgroup>
-            <col style={{ width: '25%' }} />
-            <col style={{ width: '25%' }} />
-            <col style={{ width: '25%' }} />
-            <col style={{ width: '25%' }} />
-          </colgroup>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Booze</th>
-              <th>Ingredients</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCocktails.map((record) => (
-              <Record
-                record={record}
-                handleDelete={() => handleDelete(record._id)}
-                key={record._id}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {filteredCocktails.length === 0 && (
+        <div className="empty-state">No cocktails match. Try fewer ingredients or a different spelling.</div>
+      )}
+
+      {filteredCocktails.map((record) => (
+        <DrinkCard
+          key={record._id}
+          record={record}
+          open={openId === record._id}
+          onToggle={() => setOpenId(openId === record._id ? null : record._id)}
+          onDelete={() => handleDelete(record._id)}
+        />
+      ))}
     </div>
   );
 }

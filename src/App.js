@@ -19,7 +19,7 @@ const App = () => {
         <Route path="/edit/:id" element={<Edit />} />
         <Route path="/create" element={<Create />} />
       </Routes>
-      <div style={{ position: "fixed", bottom: 4, right: 8, fontSize: "0.7rem", opacity: 0.4, pointerEvents: "none" }}>
+      <div className="version-label">
         v{process.env.REACT_APP_VERSION}
       </div>
     </div>
