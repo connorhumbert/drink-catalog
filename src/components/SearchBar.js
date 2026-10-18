@@ -67,7 +67,7 @@ export default function SearchBar({ query, setQuery, booze, setBooze, tags, setT
       </div>
 
       <div className="have-box">
-        <div className="have-label">I have…</div>
+        <div className="have-label">Ingredients I have (see what I can make)</div>
         <div className="tag-input">
           {tags.map((tag) => (
             <button key={tag} type="button" className="tag" onClick={() => setTags(tags.filter((t) => t !== tag))}>

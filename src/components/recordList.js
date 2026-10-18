@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Fuse from "fuse.js";
 import DrinkCard from "./DrinkCard";
@@ -18,6 +17,7 @@ export default function RecordList({ setLoading }) {
   const [popup, setPopup] = useState({
     show: false,
     id: null,
+    name: "",
   });
 
   async function getRecords() {
@@ -74,7 +74,6 @@ export default function RecordList({ setLoading }) {
     return (
       <div className="loading-container">
         <div className="custom-spinner"></div>
-        <p>Get your shaker and shot glass out while you wait</p>
       </div>
     );
   }
@@ -93,11 +92,14 @@ export default function RecordList({ setLoading }) {
   }
 
   const handleDelete = (id) => {
+    const record = records.find((el) => el._id === id);
     setPopup({
       show: true,
       id,
+      name: record ? record.name : "",
     });
   };
+
 
   const handleDeleteTrue = () => {
     if (popup.show && popup.id) {
@@ -105,6 +107,7 @@ export default function RecordList({ setLoading }) {
       setPopup({
         show: false,
         id: null,
+        name: "",
       });
     }
   };
@@ -113,6 +116,7 @@ export default function RecordList({ setLoading }) {
     setPopup({
       show: false,
       id: null,
+      name: "",
     });
   };
 
@@ -137,14 +141,13 @@ export default function RecordList({ setLoading }) {
       />
 
       <Modal show={popup.show} onHide={handleDeleteFalse} centered contentClassName="dark-modal">
-        <Modal.Body>This will delete the cocktail for everyone that uses this website, are you sure you want to continue?</Modal.Body>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete {popup.name || "this cocktail"}?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>This will delete the cocktail for everyone that uses this website. This can't be undone.</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleDeleteFalse}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleDeleteTrue}>
-            Delete
-          </Button>
+          <button type="button" className="modal-btn" onClick={handleDeleteFalse}>Cancel</button>
+          <button type="button" className="modal-btn danger" onClick={handleDeleteTrue}>Delete</button>
         </Modal.Footer>
       </Modal>
 

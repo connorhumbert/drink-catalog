@@ -40,14 +40,31 @@ a {
 .app-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
   max-width: 720px;
   margin: 0 auto;
   padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px 4px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   text-decoration: none;
 }
 
-.app-header img {
+.help-btn {
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--accent);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.brand img {
   width: 44px;
   height: 44px;
   border-radius: 10px;

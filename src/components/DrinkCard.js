@@ -14,9 +14,13 @@ export default function DrinkCard({ record, open, onToggle, onDelete }) {
       <button type="button" className="drink-card-head" onClick={onToggle} aria-expanded={open}>
         <span className="drink-card-top">
           <h2 className="drink-name">{record.name}</h2>
-          <span className="booze-badge">{BOOZE_LABELS[record.booze] || record.booze}</span>
+          <span className="card-meta">
+            <span className="booze-badge">{BOOZE_LABELS[record.booze] || record.booze}</span>
+            <span className="chevron" aria-hidden="true">▾</span>
+          </span>
         </span>
         {!open && <span className="drink-preview">{preview}</span>}
+        {!open && <span className="tap-hint">Tap for full recipe</span>}
       </button>
       {open && (
         <div className="drink-body">

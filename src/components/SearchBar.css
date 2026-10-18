@@ -27,20 +27,14 @@
 
 .chip-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  margin: 4px -16px 0;
-  padding: 4px 16px 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.chip-row::-webkit-scrollbar {
-  display: none;
+  padding: 4px 0 8px;
 }
 
 .chip {
   flex: none;
-  padding: 8px 16px;
+  padding: 8px 14px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 999px;

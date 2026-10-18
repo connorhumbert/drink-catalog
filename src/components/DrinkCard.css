@@ -114,3 +114,33 @@
 .card-action.danger {
   color: var(--danger);
 }
+
+.card-meta {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+}
+
+.chevron {
+  color: var(--accent);
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.drink-card.open .chevron {
+  transform: rotate(180deg);
+}
+
+.tap-hint {
+  display: block;
+  margin-top: 6px;
+  color: var(--accent);
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+}
+
+.drink-card-head:active {
+  background: rgba(255, 255, 255, 0.04);
+}
