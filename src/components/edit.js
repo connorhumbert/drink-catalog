@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import './edit&create.css';
+import { getDrink, updateDrink } from "../drinksApi";
 
 export default function Edit() {
   const [form, setForm] = useState({
@@ -23,15 +24,8 @@ export default function Edit() {
   useEffect(() => {
     async function fetchData() {
       const id = params.id.toString();
-      const response = await fetch(`https://drink-catalog-backend.onrender.com/record/${params.id.toString()}`);
+      const record = await getDrink(id);
 
-      if (!response.ok) {
-        const message = `An error has occurred: ${response.statusText}`;
-        window.alert(message);
-        return;
-      }
-
-      const record = await response.json();
       if (!record) {
         window.alert(`Record with id ${id} not found`);
         navigate("/");
@@ -56,19 +50,10 @@ export default function Edit() {
 
   async function onSubmit(e) {
     e.preventDefault();
-    const editedPerson = {
+    await updateDrink(params.id.toString(), {
       name: form.name,
       ingredients: form.ingredients,
       booze: form.booze,
-    };
-
-    // This will send a post request to update the data in the database.
-    await fetch(`https://drink-catalog-backend.onrender.com/update/${params.id}`, {
-      method: "POST",
-      body: JSON.stringify(editedPerson),
-      headers: {
-        'Content-Type': 'application/json'
-      },
     });
     navigate("/");
   }

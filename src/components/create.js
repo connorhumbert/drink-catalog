@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import './edit&create.css';
+import { addDrink } from "../drinksApi";
 
 export default function Create() {
   const [form, setForm] = useState({
@@ -29,21 +30,12 @@ export default function Create() {
   async function onSubmit(e) {
     e.preventDefault();
 
-    // When a post request is sent to the create url, we'll add a new record to the database.
-    const newCocktail = { ...form };
-
-
-    await fetch("https://drink-catalog-backend.onrender.com/record/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newCocktail),
-    })
-      .catch(error => {
-        window.alert(error);
-        return;
-      });
+    try {
+      await addDrink(form);
+    } catch (error) {
+      window.alert(error);
+      return;
+    }
 
     setForm({ name: "", ingredients: "", booze: "" });
     navigate("/");

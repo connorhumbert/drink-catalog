@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import ParentForm from "./ParentForm";
+import { getDrinks, deleteDrink } from "../drinksApi";
 import "./RecordList.css";
 
 const Record = (props) => (
@@ -36,21 +37,7 @@ export default function RecordList({ setLoading }) {
 
   async function getRecords() {
     try {
-      //const startTime = new Date().getTime(); // Capture the start time
-      const response = await fetch(`https://drink-catalog-backend.onrender.com/record/`);
-
-      if (!response.ok) {
-        const message = `An error occurred: ${response.statusText}`;
-        window.alert(message);
-        return;
-      }
-
-      const records = await response.json();
-      /* get the api response time - as of Dec 4th 2023 there are 127 cocktails and response time is 201ms.
-       const endTime = new Date().getTime(); // Capture the end time when the response is received
-       const duration = endTime - startTime; // Calculate the duration in milliseconds
-       console.log(`Time taken: ${duration}ms`);
-      */
+      const records = await getDrinks();
       setRecords(records);
     } catch (error) {
       console.error("Error fetching cocktail recipes:", error);
@@ -69,7 +56,7 @@ export default function RecordList({ setLoading }) {
     return (
       <div className="loading-container">
         <div className="custom-spinner"></div>
-        <p>Get your shaker and shot glass out while you wait, this application can take up to a minute to come online</p>
+        <p>Get your shaker and shot glass out while you wait</p>
       </div>
     );
   }
@@ -81,9 +68,7 @@ export default function RecordList({ setLoading }) {
   }
 
   async function deleteRecord(id) {
-    await fetch(`https://drink-catalog-backend.onrender.com/${id}`, {
-      method: "DELETE"
-    });
+    await deleteDrink(id);
 
     const newRecords = records.filter((el) => el._id !== id);
     setRecords(newRecords);
