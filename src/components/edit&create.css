@@ -105,3 +105,61 @@
   color: var(--muted);
   font-size: 0.85rem;
 }
+
+.ingredient-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ing-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.ing-suggest {
+  flex-basis: 100%;
+  padding: 0;
+}
+
+.ing-remove {
+  flex: none;
+  width: 44px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--muted);
+}
+
+.add-row {
+  width: 100%;
+  padding: 12px;
+  background: none;
+  border: 1px dashed var(--accent);
+  border-radius: 12px;
+  color: var(--accent);
+  font-size: 1rem;
+}
+
+.field-hint {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.field-hint.warn {
+  color: var(--accent);
+}
+
+.chip-tag {
+  margin-left: 6px;
+  color: var(--accent);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.btn-accent:disabled {
+  opacity: 0.6;
+}

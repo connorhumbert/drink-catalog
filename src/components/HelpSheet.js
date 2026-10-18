@@ -14,6 +14,7 @@ export default function HelpSheet({ show, onHide }) {
           <li>Tap a booze type (Whiskey, Gin, Rum…) to narrow the list.</li>
           <li>Under “Ingredients I have”, add what's in your kitchen to see what you can make.</li>
           <li>Tap any cocktail to open its full recipe.</li>
+          <li>Made one? Tap “♡ Like” inside the recipe so everyone can see what's popular.</li>
           <li>Don't see yours? Tap “+ New cocktail” to add it for everyone.</li>
         </ol>
       </Modal.Body>

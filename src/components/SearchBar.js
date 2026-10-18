@@ -1,16 +1,9 @@
 import React, { useMemo, useState } from "react";
+import { BOOZE_TYPES } from "../boozeTypes";
 import { normalize } from "../ingredients";
 import "./SearchBar.css";
 
-const BOOZE_OPTIONS = [
-  { label: "All", value: "None" },
-  { label: "Whiskey", value: "Whiskey/Rye/Bourbon" },
-  { label: "Gin", value: "Gin" },
-  { label: "Rum", value: "Rum" },
-  { label: "Tequila", value: "Tequila" },
-  { label: "Vodka", value: "Vodka" },
-  { label: "Wine", value: "Wine" },
-];
+const BOOZE_OPTIONS = [{ label: "All", value: "None" }, ...BOOZE_TYPES];
 
 export default function SearchBar({ query, setQuery, booze, setBooze, tags, setTags, suggestions, count, onClear }) {
   const [draft, setDraft] = useState("");

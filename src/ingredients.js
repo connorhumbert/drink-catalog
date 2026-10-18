@@ -45,8 +45,51 @@ export function buildSuggestions(records) {
     for (const item of record.ingredients || []) {
       if (isGarnish(item)) continue;
       const name = ingredientName(item);
+      // Skip notes and substitution lines that aren't a single ingredient.
+      if (/[:,]/.test(name) || name.length > 32) continue;
       counts.set(name, (counts.get(name) || 0) + 1);
     }
   }
   return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([name]) => name);
+}
+
+const UNIT_CAPTURE = new RegExp(`^(${UNITS})\\b\\.?\\s*(?:of\\s+)?`, "i");
+
+// "1 1/2 oz rum (white)" -> { amount: "1 1/2", unit: "oz", name: "rum (white)" }. Lines with no leading number keep everything in name.
+export function splitIngredient(raw) {
+  const text = raw.trim();
+  const quantity = text.match(QUANTITY);
+  if (!quantity || !/\d/.test(quantity[0])) return { amount: "", unit: "", name: text };
+  const rest = text.slice(quantity[0].length);
+  const unit = rest.match(UNIT_CAPTURE);
+  return {
+    amount: quantity[0].trim(),
+    unit: unit ? unit[1].toLowerCase() : "",
+    name: unit ? rest.slice(unit[0].length).trim() : rest.trim(),
+  };
+}
+
+export function joinIngredient({ amount, unit, name }) {
+  return [amount, unit, name].map((part) => (part || "").trim()).filter(Boolean).join(" ");
+}
+
+export function garnishText(raw) {
+  return raw.replace(/^\s*garnish\s*:?\s*/i, "").trim();
+}
+
+// Stored list -> form state: one raw line per ingredient row plus one garnish string.
+export function toFormState(ingredients) {
+  const list = Array.isArray(ingredients) ? ingredients : Object.values(ingredients || {});
+  return {
+    rows: list.filter((item) => !isGarnish(item)).map((item) => item.trim()),
+    garnish: list.filter(isGarnish).map(garnishText).filter(Boolean).join(", "),
+  };
+}
+
+// Form state -> stored list (garnish goes last as a "Garnish:" line).
+export function fromFormState(rows, garnish) {
+  const list = rows.map((row) => row.trim()).filter(Boolean);
+  const garnishLine = garnish.trim();
+  if (garnishLine) list.push(`Garnish: ${garnishLine}`);
+  return list;
 }

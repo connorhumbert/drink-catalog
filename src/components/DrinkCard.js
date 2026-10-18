@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import { ingredientName, isGarnish } from "../ingredients";
 import "./DrinkCard.css";
 
-const BOOZE_LABELS = { "Whiskey/Rye/Bourbon": "Whiskey" };
+const BOOZE_LABELS = { "Whiskey/Rye/Bourbon": "Whiskey", "Brandy/Cognac": "Brandy" };
 
-export default function DrinkCard({ record, open, onToggle, onDelete }) {
+export default function DrinkCard({ record, open, liked, onToggle, onDelete, onLike }) {
   const ingredients = record.ingredients || [];
   const preview = ingredients.filter((item) => !isGarnish(item)).map(ingredientName).join(" · ");
 
@@ -29,7 +29,12 @@ export default function DrinkCard({ record, open, onToggle, onDelete }) {
               <li key={index} className={isGarnish(item) ? "garnish" : undefined}>{item}</li>
             ))}
           </ul>
+          {record.glass && <p className="drink-glass">Serve in: {record.glass}</p>}
           <div className="drink-actions">
+            <button type="button" className={`card-action like${liked ? " liked" : ""}`} onClick={onLike} disabled={liked}>
+              {liked ? "♥ Liked" : "♡ Like"}
+              {record.likes > 0 && <span className="like-count">{record.likes}</span>}
+            </button>
             <Link className="card-action" to={`/edit/${record._id}`}>Edit</Link>
             <button type="button" className="card-action danger" onClick={onDelete}>Delete</button>
           </div>

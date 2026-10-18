@@ -13,6 +13,7 @@
 .drink-card[data-booze="Rum"] { --b: #b5594a; }
 .drink-card[data-booze="Tequila"] { --b: #b8c75a; }
 .drink-card[data-booze="Vodka"] { --b: #8fa8d0; }
+.drink-card[data-booze="Brandy/Cognac"] { --b: #9b7fc4; }
 .drink-card[data-booze="Wine"] { --b: #a84a68; }
 
 .drink-card.open {
@@ -143,4 +144,26 @@
 
 .drink-card-head:active {
   background: rgba(255, 255, 255, 0.04);
+}
+
+.drink-glass {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.card-action.like {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.card-action.like.liked {
+  background: rgba(224, 164, 88, 0.15);
+  opacity: 1;
+}
+
+.like-count {
+  margin-left: 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
 }

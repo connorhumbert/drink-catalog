@@ -3,7 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Fuse from "fuse.js";
 import DrinkCard from "./DrinkCard";
 import SearchBar from "./SearchBar";
-import { getDrinks, deleteDrink } from "../drinksApi";
+import { getDrinks, deleteDrink, likeDrink } from "../drinksApi";
 import { buildSuggestions, hasIngredient, ingredientName, isGarnish, normalize } from "../ingredients";
 import "./RecordList.css";
 
@@ -14,6 +14,8 @@ export default function RecordList({ setLoading }) {
   const [query, setQuery] = useState("");
   const [ingredientTags, setIngredientTags] = useState([]);
   const [openId, setOpenId] = useState(null);
+  // Kept in memory only, so a refresh lets someone like again.
+  const [likedIds, setLikedIds] = useState([]);
   const [popup, setPopup] = useState({
     show: false,
     id: null,
@@ -120,6 +122,13 @@ export default function RecordList({ setLoading }) {
     });
   };
 
+  const handleLike = (id) => {
+    if (likedIds.includes(id)) return;
+    setLikedIds([...likedIds, id]);
+    setRecords((prev) => prev.map((el) => (el._id === id ? { ...el, likes: (el.likes || 0) + 1 } : el)));
+    likeDrink(id).catch((error) => console.error("Error liking cocktail:", error));
+  };
+
   const clearFilters = () => {
     setBoozeType("None");
     setIngredientTags([]);
@@ -160,6 +169,8 @@ export default function RecordList({ setLoading }) {
           key={record._id}
           record={record}
           open={openId === record._id}
+          liked={likedIds.includes(record._id)}
+          onLike={() => handleLike(record._id)}
           onToggle={() => setOpenId(openId === record._id ? null : record._id)}
           onDelete={() => handleDelete(record._id)}
         />
