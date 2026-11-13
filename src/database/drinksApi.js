@@ -1,6 +1,8 @@
 import {
   collection,
+  disableNetwork,
   doc,
+  enableNetwork,
   onSnapshot,
   orderBy,
   query,
@@ -33,9 +35,30 @@ export function subscribeDrinks(onChange, onError) {
 // Adding, editing and deleting run as transactions. A transaction reads from the server first, so with no connection
 // it fails right away instead of being queued on the device and sent later over someone else's newer changes.
 
+// Restarts the connection that keeps the list live, so it catches up with the server. Needed because:
+// - a transaction's change isn't added to the list on this phone; it arrives through that connection like anyone
+//   else's change would, and
+// - iPhones can leave the connection frozen after the app has been in the background, so nothing arrives until the
+//   app is restarted.
+// Cheap: the server only sends what changed. Never throws.
+export async function reconnect() {
+  try {
+    await disableNetwork(db);
+    await enableNetwork(db);
+  } catch (error) {
+    console.error("Couldn't reconnect to the database:", error);
+  }
+}
+
+// After a save, catch the list up straight away rather than waiting on a connection that may be frozen.
+async function saveThenRefresh(save) {
+  await withTimeout(save);
+  reconnect();
+}
+
 export function addDrink(drink) {
   const ref = doc(drinksCollection);
-  return withTimeout(
+  return saveThenRefresh(
     runTransaction(db, async (transaction) => {
       await transaction.get(ref);
       transaction.set(ref, { ...toDrinkData(drink), createdAt: serverTimestamp() });
@@ -47,7 +70,7 @@ export function addDrink(drink) {
 // it in the meantime, so nothing is saved and ConflictError is thrown.
 export function updateDrink(id, drink, original) {
   const ref = doc(db, "drinks", id);
-  return withTimeout(
+  return saveThenRefresh(
     runTransaction(db, async (transaction) => {
       const current = await transaction.get(ref);
       if (!current.exists()) throw new DeletedError();
@@ -59,7 +82,7 @@ export function updateDrink(id, drink, original) {
 
 export function deleteDrink(id) {
   const ref = doc(db, "drinks", id);
-  return withTimeout(
+  return saveThenRefresh(
     runTransaction(db, async (transaction) => {
       const current = await transaction.get(ref);
       if (!current.exists()) return;

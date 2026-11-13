@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { subscribeDrinks } from "./drinksApi";
+import { reconnect, subscribeDrinks } from "./drinksApi";
 
 const DrinksContext = createContext(null);
 
@@ -19,6 +19,15 @@ export function DrinksProvider({ children }) {
       ),
     []
   );
+
+  // Coming back to the app (from another app, or a locked phone): catch up on anything that changed meanwhile.
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState === "visible") reconnect();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, []);
 
   return <DrinksContext.Provider value={state}>{children}</DrinksContext.Provider>;
 }
