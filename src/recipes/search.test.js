@@ -62,3 +62,41 @@ describe("searching the way phones type", () => {
     expect(searchByText(records, "prospector's").map((r) => r.name)).toEqual(["Prospector’s Smash"]);
   });
 });
+
+describe("searching by category for brand names", () => {
+  const bar = [
+    drink("Toronto", ["2 oz rye", "1/4 oz simple syrup", "1/4 oz Fernet Branca", "2 dashes angostura bitters"], "Whiskey/Rye/Bourbon"),
+    drink("Paper Plane", ["3/4 oz bourbon", "3/4 oz aperol", "1 ounce of Amari", "3/4 oz lemon juice"], "Whiskey/Rye/Bourbon"),
+    drink("Negroni", ["1 oz gin", "1 oz Campari", "1 oz sweet vermouth"]),
+    drink("Bloody Mary", ["2 oz vodka", "4 oz tomato juice", "2 dashes Tabasco sauce"], "Vodka"),
+  ];
+
+  it("'amaro' finds Fernet Branca and amari drinks, not Campari ones", () => {
+    const names = searchByText(bar, "amaro").map((r) => r.name);
+    expect(names).toEqual(expect.arrayContaining(["Toronto", "Paper Plane"]));
+    expect(names).not.toContain("Negroni");
+  });
+
+  it("'hot sauce' finds Tabasco", () => {
+    expect(searchByText(bar, "hot sauce").map((r) => r.name)).toContain("Bloody Mary");
+  });
+});
+
+describe("searching with brand names in recipes", () => {
+  const shelf = [
+    drink("Tito's Mule", ["2 oz Tito's", "4 oz ginger beer", "1/2 oz lime juice"], "Vodka"),
+    drink("Moscow Mule", ["2 oz vodka", "4 oz ginger beer", "1/2 oz lime juice"], "Vodka"),
+    drink("Gin and Tonic", ["2 oz gin", "4 oz tonic"]),
+    drink("Kentucky Buck", ["2 oz Maker's Mark", "1 oz lemon juice", "ginger beer"], "Whiskey/Rye/Bourbon"),
+  ];
+  const names = (q) => searchByText(shelf, q).map((r) => r.name);
+
+  it("a category finds drinks that only name a brand", () => {
+    expect(names("vodka")).toEqual(expect.arrayContaining(["Moscow Mule", "Tito's Mule"]));
+    expect(names("whiskey")).toContain("Kentucky Buck");
+  });
+
+  it("a brand's own name only finds drinks with that brand", () => {
+    expect(names("tito's")).toEqual(["Tito's Mule"]);
+  });
+});

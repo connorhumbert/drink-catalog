@@ -168,3 +168,30 @@ describe("general names in My Bar", () => {
     expect(missingFor(sidecar, bar(["brandy", "lemon juice"]))).toEqual(["cointreau"]);
   });
 });
+
+describe("whiskey in My Bar", () => {
+  it("covers Irish and Japanese whisk(e)y by their names, and either spelling", () => {
+    expect(missingFor(drink("Godfather", ["2 oz Irish Whiskey", "1 oz amaretto"]), bar(["whiskey", "amaretto"]))).toEqual([]);
+    expect(missingFor(drink("Highball", ["2 oz Japanese whisky", "4 oz soda water"]), bar(["whiskey", "club soda"]))).toEqual([]);
+    expect(missingFor(drink("Toddy", ["2 oz whiskey"]), bar(["irish whiskey"]))).toEqual([]);
+  });
+});
+
+describe("brands in My Bar", () => {
+  const oldFashioned = drink("Old Fashioned", ["2 oz bourbon", "1/4 oz simple syrup", "2 dashes angostura bitters"]);
+  const mule = drink("Moscow Mule", ["2 oz vodka", "4 oz ginger beer", "1/2 oz lime juice"]);
+  const titosMule = drink("Tito's Mule", ["2 oz Tito's", "4 oz ginger beer", "1/2 oz lime juice"]);
+
+  it("a brand covers recipes asking for its category", () => {
+    expect(missingFor(oldFashioned, bar(["Maker's Mark", "angostura bitters"].map((s) => s.toLowerCase())))).toEqual([]);
+    expect(missingFor(mule, bar(["titos", "ginger beer", "lime juice"]))).toEqual([]);
+  });
+
+  it("a category covers recipes asking for a brand", () => {
+    expect(missingFor(titosMule, bar(["vodka", "ginger beer", "lime juice"]))).toEqual([]);
+  });
+
+  it("a brand doesn't cover a different spirit", () => {
+    expect(missingFor(mule, bar(["bacardi", "ginger beer", "lime juice"]))).toEqual(["vodka"]);
+  });
+});

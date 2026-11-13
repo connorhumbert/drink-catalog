@@ -1,6 +1,6 @@
 import Fuse from "fuse.js";
-import { hasIngredient, ingredientName, isGarnish, isNote, noteLineText, normalize } from "./ingredients";
-import { isSynonymName, wholeWord } from "./synonyms";
+import { ingredientName, isGarnish, isNote, noteLineText, normalize } from "./ingredients";
+import { alsoFinds, isSynonymName, wholeWord } from "./synonyms";
 
 // Words in the search box, in the order they're shown:
 // 1. Drinks whose name, ingredients or spirit closely match. Small typos are allowed ("margerita", "mohito").
@@ -42,8 +42,11 @@ export function searchByText(records, text) {
     }
   };
 
+  // Only the other names, as whole words: the name itself was already searched above, and matching it again by the
+  // start of a word would make "gin" find every drink with ginger beer.
   if (isSynonymName(query)) {
-    records.filter((record) => hasIngredient(record.ingredients, query)).forEach(add);
+    const others = alsoFinds(query).map(wholeWord);
+    records.filter((record) => ingredientNamesOf(record).some((name) => others.some((pattern) => pattern.test(name)))).forEach(add);
   }
 
   const words = query.split(" ").filter((word) => word.length >= 2);
@@ -57,6 +60,13 @@ export function searchByText(records, text) {
   }
 
   return results;
+}
+
+// A drink's ingredient names, without garnish or notes, normalized for matching ("2 oz Tito's" -> "tito's").
+function ingredientNamesOf(record) {
+  return (record.ingredients || [])
+    .filter((item) => !isGarnish(item) && !isNote(item))
+    .map((item) => normalize(ingredientName(item)));
 }
 
 // A drink's note lines ("Note: …", older "Steps: …", "Dirty: 1/2 oz olive brine"), normalized for matching.

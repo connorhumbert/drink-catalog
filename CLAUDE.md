@@ -14,6 +14,7 @@ A shared cocktail recipe app (Create React App, React 18, Firestore). There are 
 - `src/recipes/`: logic about recipe text, no UI.
   - `ingredients.js`: parses ingredient lines (amount, unit, name), `normalize()`, `hasIngredient()`, form ↔ stored conversion.
   - `synonyms.js`: the single synonym list used by search and My Bar. Add equivalents here, not in the data.
+  - `brands.js`: spirit brands by category ("tito's" → vodka). A brand counts as its category in My Bar; a category finds brand-only recipes in search.
   - `search.js`: the search box: close matches on names and ingredients, synonyms, then whole-word matches in notes.
   - `suggestions.js` (glass and garnish ideas), `boozeTypes.js` (the booze categories).
 - `src/screens/`: one folder per screen. `drinks/` (`DrinksTab.js`), `myBar/` (My Bar; `cabinet.js` is its saved list and "what you can make"), `addEdit/` (`AddDrink.js`, `EditDrink.js`, shared `DrinkForm.js` + `IngredientEditor.js`).
