@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
-import Fuse from "fuse.js";
 import DrinkList from "./DrinkList";
 import SearchBar from "./SearchBar";
-import { buildSuggestions, hasIngredient, ingredientName, isGarnish, normalize } from "../ingredients";
-import { alsoFinds } from "../synonyms";
+import { buildSuggestions, hasIngredient } from "../ingredients";
+import { searchByText } from "../search";
 import useDrinks from "../useDrinks";
 import useSessionState from "../useSessionState";
 import { LoadingOrEmpty, OfflineNote } from "./StatusMessages";
@@ -27,35 +26,7 @@ export default function RecordList() {
     if (ingredientTags.length > 0) {
       results = results.filter((el) => ingredientTags.every((tag) => hasIngredient(el.ingredients, tag)));
     }
-    const text = query.trim();
-    if (text.length > 0) {
-      const searchable = results.map((el) => ({
-        record: el,
-        name: normalize(el.name),
-        booze: normalize(el.booze || ""),
-        ingredients: (el.ingredients || []).filter((item) => !isGarnish(item)).map((item) => normalize(ingredientName(item))),
-      }));
-      const fuse = new Fuse(searchable, {
-        keys: [
-          { name: "name", weight: 0.6 },
-          { name: "ingredients", weight: 0.3 },
-          { name: "booze", weight: 0.1 },
-        ],
-        // 0.2 still finds most one-letter typos ("margerita", "mohito") but stops near-misses like
-        // "Orange Julius" matching every drink with orange juice. 0.15 and below start missing real typos.
-        threshold: 0.2,
-        ignoreLocation: true,
-        minMatchCharLength: 2,
-      });
-      const filtered = results;
-      results = fuse.search(normalize(text)).map((hit) => hit.item.record);
-      // Typing a name with synonyms ("club soda") also lists drinks that use another name for it ("soda water").
-      if (alsoFinds(normalize(text)).length > 0) {
-        const shown = new Set(results);
-        results = [...results, ...filtered.filter((el) => !shown.has(el) && hasIngredient(el.ingredients, text))];
-      }
-    }
-    return results;
+    return searchByText(results, query);
   }, [records, boozeType, ingredientTags, query]);
 
   if (loading || records.length === 0) {

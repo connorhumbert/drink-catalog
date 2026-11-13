@@ -25,16 +25,16 @@ export function isNote(raw) {
   return text.startsWith("(") || text.replace(/\([^)]*\)?/g, "").includes(":");
 }
 
-// "Steps: shake with ice" lines say how to make the drink. They're kept in the ingredient list so the database
-// doesn't need a new field, and older copies of the app still show them.
-const STEP = /^\s*steps?\s*:\s*/i;
+// "Note: Shake with ice" lines hold the drink's notes: steps, variations, tips. They're kept in the ingredient list so
+// the database doesn't need a new field, and older copies of the app still show them. Older "Steps:" lines count too.
+const NOTE_LINE = /^\s*(?:notes?|steps?)\s*:\s*/i;
 
-export function isStep(raw) {
-  return STEP.test(raw);
+export function isNoteLine(raw) {
+  return NOTE_LINE.test(raw);
 }
 
-export function stepText(raw) {
-  return raw.replace(STEP, "").trim();
+export function noteLineText(raw) {
+  return raw.replace(NOTE_LINE, "").trim();
 }
 
 // "1 1/4 oz rum (amber/dark)" -> "rum". Falls back to the raw text if nothing is left.
@@ -122,25 +122,25 @@ export function garnishText(raw) {
   return raw.replace(/^\s*garnish\s*:?\s*/i, "").trim();
 }
 
-// Stored list -> form state: one raw line per ingredient row, one garnish string, and the steps one per line.
+// Stored list -> form state: one raw line per ingredient row, one garnish string, and the notes one per line.
 export function toFormState(ingredients) {
   const list = Array.isArray(ingredients) ? ingredients : Object.values(ingredients || {});
   return {
-    rows: list.filter((item) => !isGarnish(item) && !isStep(item)).map((item) => item.trim()),
+    rows: list.filter((item) => !isGarnish(item) && !isNoteLine(item)).map((item) => item.trim()),
     garnish: list.filter(isGarnish).map(garnishText).filter(Boolean).join(", "),
-    steps: list.filter(isStep).map(stepText).filter(Boolean).join("\n"),
+    notes: list.filter(isNoteLine).map(noteLineText).filter(Boolean).join("\n"),
   };
 }
 
-// Form state -> stored list: ingredients, then a "Garnish:" line, then one "Steps:" line per line of steps.
-export function fromFormState(rows, garnish, steps = "") {
+// Form state -> stored list: ingredients, then a "Garnish:" line, then one "Note:" line per line of notes.
+export function fromFormState(rows, garnish, notes = "") {
   const list = rows.map((row) => row.trim()).filter(Boolean);
   const garnishLine = garnish.trim();
   if (garnishLine) list.push(`Garnish: ${garnishLine}`);
-  steps
+  notes
     .split("\n")
-    .map(stepText)
+    .map(noteLineText)
     .filter(Boolean)
-    .forEach((step) => list.push(`Steps: ${step}`));
+    .forEach((note) => list.push(`Note: ${note}`));
   return list;
 }

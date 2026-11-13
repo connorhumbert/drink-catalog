@@ -176,11 +176,11 @@
   font-weight: 500;
 }
 
-.drink-steps {
+.drink-notes {
   margin-top: 14px;
 }
 
-.drink-steps h3 {
+.drink-notes h3 {
   margin: 0 0 6px;
   color: var(--muted);
   font-family: inherit;
@@ -190,17 +190,14 @@
   text-transform: uppercase;
 }
 
-.drink-steps p,
-.drink-steps ol {
+.drink-notes ul {
   margin: 0;
+  padding: 0;
+  list-style: none;
   font-size: 0.95rem;
   line-height: 1.45;
 }
 
-.drink-steps ol {
-  padding-left: 1.3em;
-}
-
-.drink-steps li + li {
-  margin-top: 4px;
+.drink-notes li + li {
+  margin-top: 6px;
 }

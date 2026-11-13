@@ -25,6 +25,7 @@ describe("isNote", () => {
     expect(isNote("Optional: Garnish w 3 drops angostura bitters")).toBe(true);
     expect(isNote("Optional: Dry: less vermouth")).toBe(true);
     expect(isNote("Steps: blend")).toBe(true);
+    expect(isNote("Note: Dirty: 1/2 oz olive brine")).toBe(true);
   });
 });
 
@@ -82,27 +83,33 @@ describe("synonyms", () => {
   });
 });
 
-describe("steps in the form", () => {
-  const stored = ["1 oz rum", "Garnish: Lime wheel", "Steps: blend", "Steps: pour into a glass"];
+describe("notes in the form", () => {
+  const stored = ["1 oz rum", "Garnish: Lime wheel", "Note: Blend", "Note: Dirty: add 1/2 oz olive brine"];
 
-  it("loads Steps lines into their own box", () => {
-    expect(toFormState(stored)).toEqual({ rows: ["1 oz rum"], garnish: "Lime wheel", steps: "blend\npour into a glass" });
+  it("loads Note lines into the Notes box, keeping a note's own label", () => {
+    expect(toFormState(stored)).toEqual({ rows: ["1 oz rum"], garnish: "Lime wheel", notes: "Blend\nDirty: add 1/2 oz olive brine" });
   });
 
-  it("saves one Steps line per line, after the garnish, and round-trips", () => {
-    const { rows, garnish, steps } = toFormState(stored);
-    expect(fromFormState(rows, garnish, steps)).toEqual(stored);
+  it("saves one Note line per line, after the garnish, and round-trips", () => {
+    const { rows, garnish, notes } = toFormState(stored);
+    expect(fromFormState(rows, garnish, notes)).toEqual(stored);
   });
 
-  it("skips blank lines and a typed Steps: prefix", () => {
-    expect(fromFormState(["1 oz rum"], "", "\n Steps: shake \n\nstrain\n")).toEqual(["1 oz rum", "Steps: shake", "Steps: strain"]);
+  it("loads older Steps lines into the Notes box and saves them as Note lines", () => {
+    const { rows, garnish, notes } = toFormState(["1 oz rum", "Steps: blend"]);
+    expect(notes).toBe("blend");
+    expect(fromFormState(rows, garnish, notes)).toEqual(["1 oz rum", "Note: blend"]);
   });
 
-  it("leaves other notes in the ingredient rows", () => {
+  it("skips blank lines and a typed Note: prefix", () => {
+    expect(fromFormState(["1 oz rum"], "", "\n Note: shake \n\nstrain\n")).toEqual(["1 oz rum", "Note: shake", "Note: strain"]);
+  });
+
+  it("leaves notes that are still in ingredient rows where they are", () => {
     expect(toFormState(["2 oz gin", "Dry: less vermouth"]).rows).toEqual(["2 oz gin", "Dry: less vermouth"]);
   });
 
-  it("works without steps, as before", () => {
+  it("works without notes, as before", () => {
     expect(fromFormState(["1 oz rum"], "")).toEqual(["1 oz rum"]);
   });
 });

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ingredientName, isGarnish, isNote, isStep, stepText } from "../ingredients";
+import { ingredientName, isGarnish, isNote, isNoteLine, noteLineText } from "../ingredients";
 import "./DrinkCard.css";
 
 const BOOZE_LABELS = { "Whiskey/Rye/Bourbon": "Whiskey", "Brandy/Cognac": "Brandy" };
@@ -9,7 +9,7 @@ const BOOZE_LABELS = { "Whiskey/Rye/Bourbon": "Whiskey", "Brandy/Cognac": "Brand
 export default function DrinkCard({ record, open, liked, missing, onToggle, onDelete, onLike }) {
   const ingredients = record.ingredients || [];
   const preview = ingredients.filter((item) => !isGarnish(item) && !isNote(item)).map(ingredientName).join(" · ");
-  const steps = ingredients.filter(isStep).map(stepText).filter(Boolean).map((step) => step.charAt(0).toUpperCase() + step.slice(1));
+  const notes = ingredients.filter(isNoteLine).map(noteLineText).filter(Boolean).map((note) => note.charAt(0).toUpperCase() + note.slice(1));
 
   return (
     <article className={`drink-card${open ? " open" : ""}`} data-booze={record.booze}>
@@ -28,20 +28,16 @@ export default function DrinkCard({ record, open, liked, missing, onToggle, onDe
       {open && (
         <div className="drink-body">
           <ul className="drink-ingredients">
-            {ingredients.filter((item) => !isStep(item)).map((item, index) => (
+            {ingredients.filter((item) => !isNoteLine(item)).map((item, index) => (
               <li key={index} className={isGarnish(item) ? "garnish" : undefined}>{item}</li>
             ))}
           </ul>
-          {steps.length > 0 && (
-            <div className="drink-steps">
-              <h3>How to make it</h3>
-              {steps.length === 1 ? (
-                <p>{steps[0]}</p>
-              ) : (
-                <ol>
-                  {steps.map((step, index) => <li key={index}>{step}</li>)}
-                </ol>
-              )}
+          {notes.length > 0 && (
+            <div className="drink-notes">
+              <h3>Notes</h3>
+              <ul>
+                {notes.map((note, index) => <li key={index}>{note}</li>)}
+              </ul>
             </div>
           )}
           {record.glass && <p className="drink-glass">Serve in: {record.glass}</p>}

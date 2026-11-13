@@ -164,7 +164,64 @@
   opacity: 0.6;
 }
 
-.steps-input {
+.notes-input {
   resize: vertical;
   line-height: 1.45;
+}
+
+/* Glass and Garnish start closed. The header is one big tap target that shows what's chosen. */
+.optional-section {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.optional-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 14px;
+  background: none;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.optional-title {
+  flex: none;
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.optional-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 0.95rem;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.optional-toggle .chevron {
+  flex: none;
+  color: var(--accent);
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.optional-section.open .chevron {
+  transform: rotate(180deg);
+}
+
+.optional-body {
+  padding: 0 14px 12px;
 }

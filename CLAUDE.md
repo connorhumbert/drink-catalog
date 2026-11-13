@@ -14,13 +14,15 @@ A shared cocktail recipe app (Create React App, React 18, Firestore). There are 
 - `src/synonyms.js`: the single synonym list used by both search and My Bar. Add equivalents here, not in the data.
 - `src/cabinet.js`: My Bar (saved in localStorage on the device) and "what you can make".
 - `src/suggestions.js`: glass and garnish suggestions in the form.
-- `src/components/`: `recordList.js` (Drinks tab and search), `DrinkForm.js` + `IngredientEditor.js` (add and edit), `DrinkCard.js`.
+- `src/search.js`: the search box: close matches on names and ingredients, synonyms, then whole-word matches in notes.
+- `src/components/`: `recordList.js` (Drinks tab), `DrinkForm.js` + `IngredientEditor.js` (add and edit), `DrinkCard.js`.
 
 ## Ingredient data conventions
 Each drink's `ingredients` field is an array of free-text lines. Don't make people use a fixed format; the code reads these conventions:
 - `2 oz bourbon`: amount, then unit, then name. Text in parentheses is ignored by search.
-- `Optional: …` is an optional ingredient. `Garnish: …` is the garnish line. `Steps: …` lines go in the "How to make it" box.
-- Any other line with a colon outside parentheses (e.g. `Dry: less vermouth`) is a note and is skipped by search and My Bar.
+- `Optional: …` is an optional ingredient. `Garnish: …` is the garnish line.
+- `Note: …` lines (and older `Steps: …` lines) are the form's Notes box: steps, variations, tips. The card shows them under "Notes".
+- Any other line with a colon outside parentheses (e.g. `Dry: less vermouth`) is also a note. Notes are skipped by My Bar and the "made with" filters; the search box matches them by whole words only.
 - Prefer "generic word + brand" (`Domaine de Canton ginger liqueur`) and put a style before the spirit (`white rum`, `blanco tequila`).
 
 ## Rules

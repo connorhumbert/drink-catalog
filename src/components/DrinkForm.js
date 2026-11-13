@@ -10,13 +10,13 @@ export default function DrinkForm({ initial, records, excludeId, submitLabel, on
   const [name, setName] = useState(initial.name || "");
   const [booze, setBooze] = useState(initial.booze || "");
   const [glass, setGlass] = useState(initial.glass || "");
-  const [{ startRows, startGarnish, startSteps }] = useState(() => {
+  const [{ startRows, startGarnish, startNotes }] = useState(() => {
     const state = toFormState(initial.ingredients || []);
-    return { startRows: state.rows, startGarnish: state.garnish, startSteps: state.steps };
+    return { startRows: state.rows, startGarnish: state.garnish, startNotes: state.notes };
   });
   const [rows, setRows] = useState(() => (startRows.length ? startRows.map((text) => ({ text })) : [{}, {}, {}]).map(newRow));
   const [garnish, setGarnish] = useState(startGarnish);
-  const [steps, setSteps] = useState(startSteps);
+  const [notes, setNotes] = useState(startNotes);
   const [saving, setSaving] = useState(false);
 
   const ingredientSuggestions = useMemo(() => buildSuggestions(records), [records]);
@@ -44,7 +44,7 @@ export default function DrinkForm({ initial, records, excludeId, submitLabel, on
     if (saving) return;
     setSaving(true);
     try {
-      await onSubmit({ name: name.trim(), booze, glass, ingredients: fromFormState(rows.map((row) => row.text), garnish, steps) });
+      await onSubmit({ name: name.trim(), booze, glass, ingredients: fromFormState(rows.map((row) => row.text), garnish, notes) });
     } finally {
       setSaving(false);
     }
@@ -91,7 +91,19 @@ export default function DrinkForm({ initial, records, excludeId, submitLabel, on
       </div>
 
       <div className="form-group">
-        <label>Glass (optional)</label>
+        <label htmlFor="notes">Notes (optional)</label>
+        <textarea
+          className="form-control notes-input"
+          id="notes"
+          rows={3}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder={"e.g. Shake with ice and strain\nFor a dirty martini, add 1/2 oz olive brine"}
+        />
+        <p className="field-hint">Steps, variations or tips. One per line.</p>
+      </div>
+
+      <OptionalSection id="glass" title="Glass" value={glass}>
         <div className="chip-row">
           {GLASSES.map((option) => (
             <button
@@ -106,14 +118,14 @@ export default function DrinkForm({ initial, records, excludeId, submitLabel, on
             </button>
           ))}
         </div>
-      </div>
+      </OptionalSection>
 
-      <div className="form-group">
-        <label htmlFor="garnish">Garnish (optional)</label>
+      <OptionalSection id="garnish" title="Garnish" value={garnish.trim()}>
         <input
           type="text"
           className="form-control"
           id="garnish"
+          aria-label="Garnish"
           value={garnish}
           onChange={(e) => setGarnish(e.target.value)}
           placeholder="e.g. Orange twist"
@@ -127,24 +139,38 @@ export default function DrinkForm({ initial, records, excludeId, submitLabel, on
             ))}
           </div>
         )}
-      </div>
-
-      <div className="form-group">
-        <label htmlFor="steps">How to make it (optional)</label>
-        <textarea
-          className="form-control steps-input"
-          id="steps"
-          rows={3}
-          value={steps}
-          onChange={(e) => setSteps(e.target.value)}
-          placeholder={"e.g. Shake with ice\nStrain into a chilled glass"}
-        />
-        <p className="field-hint">One step per line.</p>
-      </div>
+      </OptionalSection>
 
       <div className="form-group">
         <button type="submit" className="btn-accent" disabled={saving}>{submitLabel}</button>
       </div>
     </form>
+  );
+}
+
+// An optional part of the form that starts closed, so people who don't care about it can skip it.
+// The closed header still shows what's chosen ("Glass · Coupe"), so nothing is hidden when editing a drink.
+function OptionalSection({ id, title, value, children }) {
+  const [open, setOpen] = useState(false);
+  const panelId = `${id}-section`;
+  return (
+    <div className={`form-group optional-section${open ? " open" : ""}`}>
+      <button
+        type="button"
+        className="optional-toggle"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen(!open)}
+      >
+        <span className="optional-title">{title} (optional)</span>
+        <span className="optional-value">{value || (open ? "" : "Tap to add")}</span>
+        <span className="chevron" aria-hidden="true">▾</span>
+      </button>
+      {open && (
+        <div className="optional-body" id={panelId}>
+          {children}
+        </div>
+      )}
+    </div>
   );
 }

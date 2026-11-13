@@ -43,6 +43,12 @@ function sameAs(text) {
   return SAME.flatMap((group) => (group.some((name) => contains(text, name)) ? group : []));
 }
 
+// Is `term` exactly one of the names above? The search box only adds synonym matches then, so typing "canton" finds
+// every ginger liqueur drink but typing the drink name "Canton Breeze" doesn't. `term` must already be normalized.
+export function isSynonymName(term) {
+  return term in KINDS || SAME.some((group) => group.includes(term));
+}
+
 // Extra names a search for `term` should also find. `term` must already be normalized.
 export function alsoFinds(term) {
   const found = new Set(sameAs(term));
