@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from "react";
-import { BOOZE_TYPES } from "../boozeTypes";
-import { buildSuggestions, fromFormState, normalize, toFormState } from "../ingredients";
-import { saveErrorMessage } from "../saving";
-import { GLASSES, suggestGarnishes, suggestGlass } from "../suggestions";
-import useOnline from "../useOnline";
+import { BOOZE_TYPES } from "../../recipes/boozeTypes";
+import { buildSuggestions, fromFormState, normalize, toFormState } from "../../recipes/ingredients";
+import { saveErrorMessage } from "../../database/saving";
+import { GLASSES, suggestGarnishes, suggestGlass } from "../../recipes/suggestions";
+import useOnline from "../../hooks/useOnline";
 import IngredientEditor, { newRow } from "./IngredientEditor";
 import "./edit&create.css";
 

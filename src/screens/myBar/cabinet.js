@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { ingredientName, isGarnish, isNote, normalize } from "./ingredients";
-import { alsoCovers } from "./synonyms";
+import { ingredientName, isGarnish, isNote, normalize } from "../../recipes/ingredients";
+import { alsoCovers } from "../../recipes/synonyms";
 
 // The user's bar lives only on this device. There are no accounts, so it can't be tied to anyone in Firestore.
 const STORAGE_KEY = "myBar";

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { normalize } from "../ingredients";
+import { normalize } from "../../recipes/ingredients";
 import "./TagInput.css";
 
 // Removable chips plus a text box with autocomplete. Used for the list of things in My Bar.

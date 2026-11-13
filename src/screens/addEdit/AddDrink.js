@@ -2,12 +2,12 @@ import React from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import './edit&create.css';
-import { addDrink } from "../drinksApi";
-import useDrinks from "../useDrinks";
-import useOnline from "../useOnline";
+import { addDrink } from "../../database/drinksApi";
+import useDrinks from "../../database/useDrinks";
+import useOnline from "../../hooks/useOnline";
 import DrinkForm from "./DrinkForm";
 
-export default function Create() {
+export default function AddDrink() {
   // Existing drinks feed ingredient autocomplete, garnish ideas and the duplicate-name check.
   const { records } = useDrinks();
   const online = useOnline();

@@ -1,4 +1,13 @@
-import { ConflictError, DeletedError, TimeoutError, deleteErrorMessage, sameRecipe, saveErrorMessage, withTimeout } from "./saving";
+import {
+  ConflictError,
+  DeletedError,
+  TimeoutError,
+  deleteErrorMessage,
+  sameRecipe,
+  saveErrorMessage,
+  toDrinkData,
+  withTimeout,
+} from "./saving";
 
 const martini = { name: "Martini", booze: "Gin", ingredients: ["2 oz gin", "1/2 oz dry vermouth"], glass: "Martini", likes: 3 };
 
@@ -49,5 +58,33 @@ describe("withTimeout", () => {
 
   it("rejects when the promise takes too long", async () => {
     await expect(withTimeout(new Promise(() => {}), 10)).rejects.toBeInstanceOf(TimeoutError);
+  });
+});
+
+describe("toDrinkData", () => {
+  const goldRush = { name: "Gold Rush", booze: "Whiskey/Rye/Bourbon", ingredients: [" 2 oz bourbon ", "", "  ", "3/4 oz honey syrup"] };
+
+  it("trims lines, drops blank ones and adds a lowercase name for sorting", () => {
+    expect(toDrinkData(goldRush)).toEqual({
+      name: "Gold Rush",
+      nameLower: "gold rush",
+      booze: "Whiskey/Rye/Bourbon",
+      ingredients: ["2 oz bourbon", "3/4 oz honey syrup"],
+    });
+  });
+
+  it("leaves glass out when not given, but keeps an empty one so editing can clear it", () => {
+    expect("glass" in toDrinkData(goldRush)).toBe(false);
+    expect(toDrinkData({ ...goldRush, glass: "" }).glass).toBe("");
+    expect(toDrinkData({ ...goldRush, glass: "Rocks" }).glass).toBe("Rocks");
+  });
+
+  it("only saves recipe fields, never likes, ids or dates", () => {
+    const saved = toDrinkData({ ...goldRush, _id: "abc", likes: 5, createdAt: "yesterday" });
+    expect(Object.keys(saved).sort()).toEqual(["booze", "ingredients", "name", "nameLower"]);
+  });
+
+  it("still accepts ingredients as one comma-separated string", () => {
+    expect(toDrinkData({ ...goldRush, ingredients: "2 oz gin, 1 oz lemon juice" }).ingredients).toEqual(["2 oz gin", "1 oz lemon juice"]);
   });
 });

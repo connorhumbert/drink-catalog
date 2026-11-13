@@ -4,25 +4,25 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 
 // We import all the components we need in our app
-import Navbar from "./components/navbar";
+import Navbar from "./components/Navbar";
 import TabBar from "./components/TabBar";
-import RecordList from "./components/recordList";
-import BarTab from "./components/BarTab";
-import BarBottles from "./components/BarBottles";
-import Edit from "./components/edit";
-import Create from "./components/create";
-import { DrinksProvider } from "./useDrinks";
+import DrinksTab from "./screens/drinks/DrinksTab";
+import BarTab from "./screens/myBar/BarTab";
+import BarBottles from "./screens/myBar/BarBottles";
+import EditDrink from "./screens/addEdit/EditDrink";
+import AddDrink from "./screens/addEdit/AddDrink";
+import { DrinksProvider } from "./database/useDrinks";
 
 const App = () => {
   return (
     <DrinksProvider>
       <Navbar />
       <Routes>
-        <Route exact path="/" element={<RecordList />} />
+        <Route exact path="/" element={<DrinksTab />} />
         <Route path="/bar" element={<BarTab />} />
         <Route path="/bar/bottles" element={<BarBottles />} />
-        <Route path="/edit/:id" element={<Edit />} />
-        <Route path="/create" element={<Create />} />
+        <Route path="/edit/:id" element={<EditDrink />} />
+        <Route path="/create" element={<AddDrink />} />
       </Routes>
       <TabBar />
     </DrinksProvider>

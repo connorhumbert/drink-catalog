@@ -84,7 +84,7 @@ describe("nextBottles", () => {
 });
 
 describe("hasIngredient", () => {
-  const { hasIngredient } = require("./ingredients");
+  const { hasIngredient } = require("../../recipes/ingredients");
   it("ignores note lines", () => {
     const daiquiri = ["2 oz rum", "1 oz lime juice", "(Variations to shake w/: cucumber, mint)"];
     expect(hasIngredient(daiquiri, "mint")).toBe(false);

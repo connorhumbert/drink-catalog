@@ -1,5 +1,5 @@
 import React from "react";
-import useOnline from "../useOnline";
+import useOnline from "../hooks/useOnline";
 import "./RecordList.css";
 
 export function LoadingOrEmpty({ loading, error, fromCache }) {

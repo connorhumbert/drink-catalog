@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import DrinkCard from "./DrinkCard";
-import { deleteDrink } from "../drinksApi";
-import { deleteErrorMessage } from "../saving";
-import useOnline from "../useOnline";
+import { deleteDrink } from "../database/drinksApi";
+import { deleteErrorMessage } from "../database/saving";
+import useOnline from "../hooks/useOnline";
 import "./RecordList.css";
 
 // Cards with Edit and Delete. `missing` (optional) maps drink id -> ingredients the user still needs.

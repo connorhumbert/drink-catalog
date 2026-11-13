@@ -31,6 +31,24 @@ export function withTimeout(promise, ms = 15000) {
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
+// What gets saved for a drink. The Firestore rules (set in the Firebase console) only allow these fields.
+// Firestore sorts strings case-sensitively, so store a lowercase copy of the name to keep alphabetical order.
+export function toDrinkData({ name, ingredients, booze, glass }) {
+  const ingredientList = Array.isArray(ingredients)
+    ? ingredients
+    : ingredients.split(",");
+
+  const data = {
+    name,
+    nameLower: name.toLowerCase(),
+    booze,
+    ingredients: ingredientList.map((item) => item.trim()).filter(Boolean),
+  };
+  // Firestore rejects undefined, so only send glass when there is one. An empty string clears it on edit.
+  if (glass !== undefined) data.glass = glass;
+  return data;
+}
+
 // The parts of a drink someone edits in the form. Other fields (timestamps, old like counts) don't count.
 function recipeOf(drink) {
   return {

@@ -1,6 +1,6 @@
 import React, { useMemo, useRef } from "react";
-import { BOOZE_TYPES } from "../boozeTypes";
-import { normalize } from "../ingredients";
+import { BOOZE_TYPES } from "../../recipes/boozeTypes";
+import { normalize } from "../../recipes/ingredients";
 import "./SearchBar.css";
 
 const BOOZE_OPTIONS = [{ label: "All", value: "None" }, ...BOOZE_TYPES];

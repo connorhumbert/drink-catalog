@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ingredientName, isGarnish, isNote, isNoteLine, noteLineText } from "../ingredients";
+import { ingredientName, isGarnish, isNote, isNoteLine, noteLineText } from "../recipes/ingredients";
 import "./DrinkCard.css";
 
 const BOOZE_LABELS = { "Whiskey/Rye/Bourbon": "Whiskey", "Brandy/Cognac": "Brandy" };

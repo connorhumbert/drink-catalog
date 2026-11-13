@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { buildSuggestions } from "../ingredients";
-import { BASICS_LABEL, isBasic, missingById, useCabinet } from "../cabinet";
-import useDrinks from "../useDrinks";
+import { buildSuggestions } from "../../recipes/ingredients";
+import { BASICS_LABEL, isBasic, missingById, useCabinet } from "./cabinet";
+import useDrinks from "../../database/useDrinks";
 import TagInput from "./TagInput";
-import "./edit&create.css";
-import "./SearchBar.css";
+import "../addEdit/edit&create.css";
+import "../drinks/SearchBar.css";
 import "./MyBar.css";
 
 const QUICK_ADD_COUNT = 24;

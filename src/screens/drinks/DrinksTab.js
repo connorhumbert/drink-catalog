@@ -1,15 +1,15 @@
 import React, { useMemo } from "react";
-import DrinkList from "./DrinkList";
+import DrinkList from "../../components/DrinkList";
 import SearchBar from "./SearchBar";
-import { buildSuggestions, hasIngredient } from "../ingredients";
-import { searchByText } from "../search";
-import useDrinks from "../useDrinks";
-import useSessionState from "../useSessionState";
-import { LoadingOrEmpty, OfflineNote } from "./StatusMessages";
-import "./RecordList.css";
+import { buildSuggestions, hasIngredient } from "../../recipes/ingredients";
+import { searchByText } from "../../recipes/search";
+import useDrinks from "../../database/useDrinks";
+import useSessionState from "../../hooks/useSessionState";
+import { LoadingOrEmpty, OfflineNote } from "../../components/StatusMessages";
+import "../../components/RecordList.css";
 
 // The "Drinks" tab: the whole catalog with search and spirit filters.
-export default function RecordList() {
+export default function DrinksTab() {
   const { records, loading, error, fromCache } = useDrinks();
   // Kept while switching tabs, so coming back from My Bar doesn't lose the search.
   const [boozeType, setBoozeType] = useSessionState("drinks.booze", "None");

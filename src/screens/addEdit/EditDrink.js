@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import './edit&create.css';
-import { updateDrink } from "../drinksApi";
-import useDrinks from "../useDrinks";
-import useOnline from "../useOnline";
+import { updateDrink } from "../../database/drinksApi";
+import useDrinks from "../../database/useDrinks";
+import useOnline from "../../hooks/useOnline";
 import DrinkForm from "./DrinkForm";
 
 const SLOW_MS = 10000;
 
-export default function Edit() {
+export default function EditDrink() {
   const { records, loading, fromCache } = useDrinks();
   const online = useOnline();
   const params = useParams();

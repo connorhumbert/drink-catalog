@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { joinIngredient, normalize, splitIngredient } from "../ingredients";
+import { joinIngredient, normalize, splitIngredient } from "../../recipes/ingredients";
 
 let nextRowId = 1;
 export function newRow(row = {}) {

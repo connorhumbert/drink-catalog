@@ -9,13 +9,16 @@ A shared cocktail recipe app (Create React App, React 18, Firestore). There are 
 - Node version is in `.node-version`. The app version shown in the help sheet comes from `REACT_APP_VERSION` in `.env`.
 
 ## Layout
-- `src/drinksApi.js`, `src/firebase.js`: Firestore `drinks` collection, with an offline cache (IndexedDB). `useDrinks.js` holds the one live list shared by every screen.
-- `src/ingredients.js`: parses ingredient lines (amount, unit, name), `normalize()`, `hasIngredient()` for search, and form ↔ stored conversion.
-- `src/synonyms.js`: the single synonym list used by both search and My Bar. Add equivalents here, not in the data.
-- `src/cabinet.js`: My Bar (saved in localStorage on the device) and "what you can make".
-- `src/suggestions.js`: glass and garnish suggestions in the form.
-- `src/search.js`: the search box: close matches on names and ingredients, synonyms, then whole-word matches in notes.
-- `src/components/`: `recordList.js` (Drinks tab), `DrinkForm.js` + `IngredientEditor.js` (add and edit), `DrinkCard.js`.
+- `src/` root: `App.js` (routes), `index.js`, `service-worker.js` (must stay here for the build), `serviceWorkerRegistration.js`.
+- `src/database/`: Firestore `drinks` collection with an offline cache (`firebase.js`, `drinksApi.js`). `useDrinks.js` holds the one live list shared by every screen. `saving.js`: what gets saved (`toDrinkData`), the conflict check and save error messages.
+- `src/recipes/`: logic about recipe text, no UI.
+  - `ingredients.js`: parses ingredient lines (amount, unit, name), `normalize()`, `hasIngredient()`, form ↔ stored conversion.
+  - `synonyms.js`: the single synonym list used by search and My Bar. Add equivalents here, not in the data.
+  - `search.js`: the search box: close matches on names and ingredients, synonyms, then whole-word matches in notes.
+  - `suggestions.js` (glass and garnish ideas), `boozeTypes.js` (the booze categories).
+- `src/screens/`: one folder per screen. `drinks/` (`DrinksTab.js`), `myBar/` (My Bar; `cabinet.js` is its saved list and "what you can make"), `addEdit/` (`AddDrink.js`, `EditDrink.js`, shared `DrinkForm.js` + `IngredientEditor.js`).
+- `src/components/`: pieces used by several screens: `DrinkList.js` + `DrinkCard.js`, `StatusMessages.js`, `Navbar.js`, `TabBar.js`, `HelpSheet.js`.
+- `src/hooks/`: `useOnline`, `useSessionState`.
 
 ## Ingredient data conventions
 Each drink's `ingredients` field is an array of free-text lines. Don't make people use a fixed format; the code reads these conventions:
@@ -27,7 +30,7 @@ Each drink's `ingredients` field is an array of free-text lines. Don't make peop
 
 ## Rules
 - **Never write to the Firestore database without the user's explicit approval of the exact changes.** Back up the `drinks` collection to `backups/` (gitignored) first, then verify the result afterward. The app has no auth, so any write affects everyone at once.
-- Viewing works offline; **adding, editing and deleting need a connection.** They run as Firestore transactions (`src/drinksApi.js`), which fail offline instead of queueing, and editing checks nobody changed the drink since the form opened. Nothing writes offline. Don't reintroduce plain `addDoc`/`updateDoc`/`deleteDoc`.
+- Viewing works offline; **adding, editing and deleting need a connection.** They run as Firestore transactions (`src/database/drinksApi.js`), which fail offline instead of queueing, and editing checks nobody changed the drink since the form opened. Nothing writes offline. Don't reintroduce plain `addDoc`/`updateDoc`/`deleteDoc`.
 - New app versions install themselves (`skipWaiting` in `src/service-worker.js`) and show on the next open or refresh. That's only safe while the build is a single JS/CSS bundle, so avoid lazy-loaded chunks.
 - New features must not block saving or rewrite what someone typed. Suggest with chips they can tap or ignore.
 - Run the tests and a build before committing. Tests live next to the code (`*.test.js`).

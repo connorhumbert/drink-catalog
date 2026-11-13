@@ -8,26 +8,9 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./firebase";
-import { ConflictError, DeletedError, sameRecipe, withTimeout } from "./saving";
+import { ConflictError, DeletedError, sameRecipe, toDrinkData, withTimeout } from "./saving";
 
 const drinksCollection = collection(db, "drinks");
-
-// Firestore sorts strings case-sensitively, so store a lowercase copy of the name to keep alphabetical order.
-function toDrinkData({ name, ingredients, booze, glass }) {
-  const ingredientList = Array.isArray(ingredients)
-    ? ingredients
-    : ingredients.split(",");
-
-  const data = {
-    name,
-    nameLower: name.toLowerCase(),
-    booze,
-    ingredients: ingredientList.map((item) => item.trim()).filter(Boolean),
-  };
-  // Firestore rejects undefined, so only send glass when there is one. An empty string clears it on edit.
-  if (glass !== undefined) data.glass = glass;
-  return data;
-}
 
 function toDrink(snapshot) {
   return { _id: snapshot.id, ...snapshot.data() };

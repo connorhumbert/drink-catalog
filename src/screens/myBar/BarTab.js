@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { missingById, nextBottles, useCabinet } from "../cabinet";
-import useDrinks from "../useDrinks";
-import DrinkList from "./DrinkList";
-import { LoadingOrEmpty, OfflineNote } from "./StatusMessages";
+import { missingById, nextBottles, useCabinet } from "./cabinet";
+import useDrinks from "../../database/useDrinks";
+import DrinkList from "../../components/DrinkList";
+import { LoadingOrEmpty, OfflineNote } from "../../components/StatusMessages";
 import "./MyBar.css";
 
 // The "My Bar" tab: what you can make with what you have, and what's one ingredient away.
