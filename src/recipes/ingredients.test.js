@@ -10,6 +10,7 @@ import {
   normalize,
   noteLineText,
   splitIngredient,
+  startsAWord,
   toFormState,
 } from "./ingredients";
 
@@ -184,5 +185,20 @@ describe("Note and Garnish lines", () => {
     expect(garnishText("Garnish: Lime wheel")).toBe("Lime wheel");
     expect(garnishText("garnish lime wheel")).toBe("lime wheel");
     expect(garnishText("Garnish:")).toBe("");
+  });
+});
+
+describe("startsAWord", () => {
+  it("matches the start of any word", () => {
+    expect(startsAWord("fresh lemon juice", "lem")).toBe(true);
+    expect(startsAWord("fresh lemon juice", "juice")).toBe(true);
+    expect(startsAWord("fresh lemon juice", "emon")).toBe(false);
+  });
+
+  it("matches across a space or an apostrophe", () => {
+    expect(startsAWord("peychaud's bitters", "peychaud's")).toBe(true);
+    expect(startsAWord("peychaud's bitters", "peychaud's b")).toBe(true);
+    expect(startsAWord("lemon juice", "lemon j")).toBe(true);
+    expect(startsAWord("lemon juice", "lemon x")).toBe(false);
   });
 });

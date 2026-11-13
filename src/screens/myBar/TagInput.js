@@ -1,18 +1,22 @@
-import React, { useMemo, useState } from "react";
-import { normalize } from "../../recipes/ingredients";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { normalize, startsAWord } from "../../recipes/ingredients";
 import "./TagInput.css";
+
+// How long suggestions stay after the box loses focus. Tapping a suggestion on an iPhone can take focus from the box
+// before the tap itself arrives; if the suggestions vanished straight away, the tap would land on nothing.
+export const HIDE_DELAY_MS = 250;
 
 // Removable chips plus a text box with autocomplete. Used for the list of things in My Bar.
 export default function TagInput({ inputId, tags, setTags, suggestions, placeholder, emptyPlaceholder, ariaLabel }) {
   const [draft, setDraft] = useState("");
   const [focused, setFocused] = useState(false);
+  const hideTimer = useRef();
+  useEffect(() => () => clearTimeout(hideTimer.current), []);
 
   const matches = useMemo(() => {
     const text = normalize(draft.trim());
     if (!text) return [];
-    return suggestions
-      .filter((name) => !tags.includes(name) && normalize(name).split(/[^a-z0-9]+/).some((word) => word.startsWith(text)))
-      .slice(0, 6);
+    return suggestions.filter((name) => !tags.includes(name) && startsAWord(normalize(name), text)).slice(0, 6);
   }, [draft, suggestions, tags]);
 
   const addTag = (value) => {
@@ -44,11 +48,21 @@ export default function TagInput({ inputId, tags, setTags, suggestions, placehol
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={onKeyDown}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onFocus={() => {
+            clearTimeout(hideTimer.current);
+            setFocused(true);
+          }}
+          onBlur={() => {
+            clearTimeout(hideTimer.current);
+            hideTimer.current = setTimeout(() => setFocused(false), HIDE_DELAY_MS);
+          }}
           placeholder={tags.length ? placeholder : emptyPlaceholder || placeholder}
           aria-label={ariaLabel}
           enterKeyHint="done"
+          // Bottle names aren't dictionary words: iPhone autocorrect would turn "orgeat" into "organ".
+          autoCorrect="off"
+          autoCapitalize="none"
+          spellCheck={false}
         />
       </div>
       {focused && draft.trim() !== "" && (

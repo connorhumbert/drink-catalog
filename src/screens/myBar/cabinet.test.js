@@ -115,3 +115,36 @@ describe("askToKeepStorage", () => {
     await expect(askToKeepStorage(failing)).resolves.toBe(false);
   });
 });
+
+describe("useCabinet when the browser won't store anything", () => {
+  const React = require("react");
+  const { fireEvent, render, screen } = require("@testing-library/react");
+  const { useCabinet } = require("./cabinet");
+
+  function MiniBar() {
+    const [bar, setBar] = useCabinet();
+    return (
+      <button type="button" onClick={() => setBar({ ...bar, items: [...bar.items, "gin"] })}>
+        {bar.items.length} items
+      </button>
+    );
+  }
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    localStorage.clear();
+  });
+
+  it("keeps working for this visit (private browsing, Lockdown Mode, full phone)", () => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw new Error("SecurityError");
+    });
+    jest.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("QuotaExceededError");
+    });
+    render(<MiniBar />);
+    fireEvent.click(screen.getByRole("button", { name: "0 items" }));
+    expect(screen.getByRole("button", { name: "1 items" })).toBeTruthy();
+  });
+});

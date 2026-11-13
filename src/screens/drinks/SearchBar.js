@@ -1,6 +1,6 @@
 import React, { useMemo, useRef } from "react";
 import { BOOZE_TYPES } from "../../recipes/boozeTypes";
-import { normalize } from "../../recipes/ingredients";
+import { normalize, startsAWord } from "../../recipes/ingredients";
 import "./SearchBar.css";
 
 const BOOZE_OPTIONS = [{ label: "All", value: "None" }, ...BOOZE_TYPES];
@@ -22,7 +22,7 @@ export default function SearchBar({ query, setQuery, booze, setBooze, tags, setT
     const text = normalize(query.trim());
     if (text.length < 2) return [];
     const matches = suggestions.filter(
-      (name) => !tags.includes(name) && normalize(name).split(/[^a-z0-9]+/).some((word) => word.startsWith(text))
+      (name) => !tags.includes(name) && startsAWord(normalize(name), text)
     );
     // "mint" matches every drink with mint in it, so offer it before "mint leaves", "mint sprig"...
     if (ingredientWords.has(text) && !tags.includes(text) && !matches.includes(text)) matches.unshift(text);

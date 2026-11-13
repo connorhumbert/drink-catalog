@@ -63,6 +63,12 @@ export function normalize(text) {
     .trim();
 }
 
+// For suggestion boxes: does a word in `name` start with `typed`? Both must already be normalized. Typing across a
+// space or an apostrophe also counts ("peychaud's" matches "peychaud's bitters", "lemon j" matches "lemon juice").
+export function startsAWord(name, typed) {
+  return name.split(/[^a-z0-9]+/).some((word) => word.startsWith(typed)) || ` ${name}`.includes(` ${typed}`);
+}
+
 function escapeRegExp(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

@@ -54,3 +54,11 @@ describe("searchByText", () => {
     expect(names("olive cucumber")).toEqual([]);
   });
 });
+
+describe("searching the way phones type", () => {
+  it("ignores capitals, a trailing space and curly apostrophes", () => {
+    expect(searchByText(records, "AVIATION ").map((r) => r.name)).toEqual(["Aviation"]);
+    expect(searchByText(records, "Prospector’s").map((r) => r.name)).toEqual(["Prospector’s Smash"]);
+    expect(searchByText(records, "prospector's").map((r) => r.name)).toEqual(["Prospector’s Smash"]);
+  });
+});

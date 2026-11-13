@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { joinIngredient, normalize, splitIngredient } from "../../recipes/ingredients";
 
 let nextRowId = 1;
@@ -17,8 +17,24 @@ function matchesFor(text, suggestions) {
     .slice(0, 5);
 }
 
+// How long suggestions stay after the box loses focus. Tapping a suggestion on an iPhone takes focus from the box
+// before the tap itself arrives; if the suggestions vanished straight away, the tap would land on nothing.
+export const HIDE_DELAY_MS = 250;
+
 export default function IngredientEditor({ rows, setRows, suggestions }) {
   const [focusedId, setFocusedId] = useState(null);
+  const hideTimer = useRef();
+  useEffect(() => () => clearTimeout(hideTimer.current), []);
+
+  function showSuggestionsFor(id) {
+    clearTimeout(hideTimer.current);
+    setFocusedId(id);
+  }
+
+  function hideSuggestionsSoon(id) {
+    clearTimeout(hideTimer.current);
+    hideTimer.current = setTimeout(() => setFocusedId((current) => (current === id ? null : current)), HIDE_DELAY_MS);
+  }
 
   function updateRow(id, text) {
     setRows((prev) => prev.map((row) => (row.id === id ? { ...row, text } : row)));
@@ -69,12 +85,15 @@ export default function IngredientEditor({ rows, setRows, suggestions }) {
               aria-label={`Ingredient ${index + 1}`}
               placeholder={PLACEHOLDERS[Math.min(index, PLACEHOLDERS.length - 1)]}
               enterKeyHint="next"
+              // Ingredient names aren't dictionary words: iPhone autocorrect would turn "orgeat" into "organ".
+              autoCorrect="off"
+              spellCheck={false}
               autoFocus={row.autoFocus}
               required={index === 0}
               value={row.text}
               onChange={(e) => updateRow(row.id, e.target.value)}
-              onFocus={() => setFocusedId(row.id)}
-              onBlur={() => setFocusedId((current) => (current === row.id ? null : current))}
+              onFocus={() => showSuggestionsFor(row.id)}
+              onBlur={() => hideSuggestionsSoon(row.id)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
@@ -98,7 +117,8 @@ export default function IngredientEditor({ rows, setRows, suggestions }) {
                     type="button"
                     key={name}
                     className="chip"
-                    onPointerDown={(e) => e.preventDefault()}
+                    // Keeps the keyboard open where the browser allows it (same as My Bar's suggestions).
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={() => pick(row, name)}
                   >
                     {name}

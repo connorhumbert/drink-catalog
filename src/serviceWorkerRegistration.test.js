@@ -40,3 +40,21 @@ describe("watchForNewVersion", () => {
     expect(onUpdate).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("register", () => {
+  const { register } = require("./serviceWorkerRegistration");
+  const env = process.env.NODE_ENV;
+
+  afterEach(() => {
+    process.env.NODE_ENV = env;
+    jest.restoreAllMocks();
+  });
+
+  it("does nothing in browsers without service workers, like the ones built into Messenger or Instagram", () => {
+    process.env.NODE_ENV = "production";
+    expect("serviceWorker" in navigator).toBe(false);
+    const addListener = jest.spyOn(window, "addEventListener");
+    expect(() => register()).not.toThrow();
+    expect(addListener).not.toHaveBeenCalledWith("load", expect.anything());
+  });
+});

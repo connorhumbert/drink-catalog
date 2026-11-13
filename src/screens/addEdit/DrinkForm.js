@@ -135,6 +135,8 @@ export default function DrinkForm({ initial, records, excludeId, submitLabel, on
           className="form-control"
           id="garnish"
           aria-label="Garnish"
+          autoCorrect="off"
+          spellCheck={false}
           value={garnish}
           onChange={(e) => setGarnish(e.target.value)}
           placeholder="e.g. Orange twist"
