@@ -1,3 +1,5 @@
+import { alsoFinds, wholeWord } from "./synonyms";
+
 const UNITS =
   "oz|ounces?|ml|cl|tsp|teaspoons?|tbsp|tablespoons?|cups?|dash(?:es)?|drops?|bar ?spoons?|parts?|splash(?:es)?|slices?|wedges?|sprigs?|leaves|leaf|cubes?|pinch(?:es)?|scoops?|shots?|jiggers?|whole";
 
@@ -8,11 +10,31 @@ export function isGarnish(raw) {
   return /^garnish\b/i.test(raw.trim());
 }
 
+const OPTIONAL = /^optional\s*:\s*/i;
+
 // Notes rather than ingredients: "Substitute vodka: gin, rum", "Dirty: 1/2 oz olive brine", "(Variations to shake w/: mint)".
 // A colon inside parentheses is still an ingredient: "1 oz crème de cacao (substitute: kahlua)".
+// "Optional: 1/2 oz simple syrup" is an ingredient, so search finds it. "Optional: Garnish w bitters" is not.
 export function isNote(raw) {
   const text = raw.trim();
+  const optional = text.match(OPTIONAL);
+  if (optional) {
+    const rest = text.slice(optional[0].length);
+    return isGarnish(rest) || isNote(rest);
+  }
   return text.startsWith("(") || text.replace(/\([^)]*\)?/g, "").includes(":");
+}
+
+// "Steps: shake with ice" lines say how to make the drink. They're kept in the ingredient list so the database
+// doesn't need a new field, and older copies of the app still show them.
+const STEP = /^\s*steps?\s*:\s*/i;
+
+export function isStep(raw) {
+  return STEP.test(raw);
+}
+
+export function stepText(raw) {
+  return raw.replace(STEP, "").trim();
 }
 
 // "1 1/4 oz rum (amber/dark)" -> "rum". Falls back to the raw text if nothing is left.
@@ -27,12 +49,18 @@ export function ingredientName(raw) {
   return cleaned || raw.trim().toLowerCase();
 }
 
-// Lowercase and strip accents so "añejo" matches "anejo".
+// For comparing names: lowercase, no accents, straight apostrophes, hyphens as spaces and no trailing periods, so
+// "Añejo" = "anejo", "St-Germain" = "St. Germain" = "st germain" and "Peychaud’s" = "peychaud's".
 export function normalize(text) {
   return text
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
-    .toLowerCase();
+    .toLowerCase()
+    .replace(/[‘’ʼ]/g, "'")
+    .replace(/[-‐-―]/g, " ")
+    .replace(/\.(?=\s|$)/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function escapeRegExp(text) {
@@ -40,9 +68,15 @@ function escapeRegExp(text) {
 }
 
 // Does any ingredient contain the tag at the start of a word? ("rum" matches "dark rum", not "crumb")
+// Also finds synonyms: "club soda" finds "soda water", "orange liqueur" finds "cointreau".
 export function hasIngredient(ingredients, tag) {
-  const pattern = new RegExp(`(^|[^a-z0-9])${escapeRegExp(normalize(tag))}`);
-  return (ingredients || []).some((item) => !isGarnish(item) && !isNote(item) && pattern.test(normalize(ingredientName(item))));
+  const term = normalize(tag);
+  const patterns = [new RegExp(`(^|[^a-z0-9])${escapeRegExp(term)}`), ...alsoFinds(term).map(wholeWord)];
+  return (ingredients || []).some((item) => {
+    if (isGarnish(item) || isNote(item)) return false;
+    const name = normalize(ingredientName(item));
+    return patterns.some((pattern) => pattern.test(name));
+  });
 }
 
 // Ingredient names across all drinks, most common first, for autocomplete.
@@ -88,19 +122,25 @@ export function garnishText(raw) {
   return raw.replace(/^\s*garnish\s*:?\s*/i, "").trim();
 }
 
-// Stored list -> form state: one raw line per ingredient row plus one garnish string.
+// Stored list -> form state: one raw line per ingredient row, one garnish string, and the steps one per line.
 export function toFormState(ingredients) {
   const list = Array.isArray(ingredients) ? ingredients : Object.values(ingredients || {});
   return {
-    rows: list.filter((item) => !isGarnish(item)).map((item) => item.trim()),
+    rows: list.filter((item) => !isGarnish(item) && !isStep(item)).map((item) => item.trim()),
     garnish: list.filter(isGarnish).map(garnishText).filter(Boolean).join(", "),
+    steps: list.filter(isStep).map(stepText).filter(Boolean).join("\n"),
   };
 }
 
-// Form state -> stored list (garnish goes last as a "Garnish:" line).
-export function fromFormState(rows, garnish) {
+// Form state -> stored list: ingredients, then a "Garnish:" line, then one "Steps:" line per line of steps.
+export function fromFormState(rows, garnish, steps = "") {
   const list = rows.map((row) => row.trim()).filter(Boolean);
   const garnishLine = garnish.trim();
   if (garnishLine) list.push(`Garnish: ${garnishLine}`);
+  steps
+    .split("\n")
+    .map(stepText)
+    .filter(Boolean)
+    .forEach((step) => list.push(`Steps: ${step}`));
   return list;
 }

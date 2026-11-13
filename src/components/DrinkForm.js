@@ -10,12 +10,13 @@ export default function DrinkForm({ initial, records, excludeId, submitLabel, on
   const [name, setName] = useState(initial.name || "");
   const [booze, setBooze] = useState(initial.booze || "");
   const [glass, setGlass] = useState(initial.glass || "");
-  const [{ startRows, startGarnish }] = useState(() => {
+  const [{ startRows, startGarnish, startSteps }] = useState(() => {
     const state = toFormState(initial.ingredients || []);
-    return { startRows: state.rows, startGarnish: state.garnish };
+    return { startRows: state.rows, startGarnish: state.garnish, startSteps: state.steps };
   });
   const [rows, setRows] = useState(() => (startRows.length ? startRows.map((text) => ({ text })) : [{}, {}, {}]).map(newRow));
   const [garnish, setGarnish] = useState(startGarnish);
+  const [steps, setSteps] = useState(startSteps);
   const [saving, setSaving] = useState(false);
 
   const ingredientSuggestions = useMemo(() => buildSuggestions(records), [records]);
@@ -43,7 +44,7 @@ export default function DrinkForm({ initial, records, excludeId, submitLabel, on
     if (saving) return;
     setSaving(true);
     try {
-      await onSubmit({ name: name.trim(), booze, glass, ingredients: fromFormState(rows.map((row) => row.text), garnish) });
+      await onSubmit({ name: name.trim(), booze, glass, ingredients: fromFormState(rows.map((row) => row.text), garnish, steps) });
     } finally {
       setSaving(false);
     }
@@ -126,6 +127,19 @@ export default function DrinkForm({ initial, records, excludeId, submitLabel, on
             ))}
           </div>
         )}
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="steps">How to make it (optional)</label>
+        <textarea
+          className="form-control steps-input"
+          id="steps"
+          rows={3}
+          value={steps}
+          onChange={(e) => setSteps(e.target.value)}
+          placeholder={"e.g. Shake with ice\nStrain into a chilled glass"}
+        />
+        <p className="field-hint">One step per line.</p>
       </div>
 
       <div className="form-group">

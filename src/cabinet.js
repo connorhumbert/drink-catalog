@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ingredientName, isGarnish, isNote, normalize } from "./ingredients";
+import { alsoCovers } from "./synonyms";
 
 // The user's bar lives only on this device. There are no accounts, so it can't be tied to anyone in Firestore.
 const STORAGE_KEY = "myBar";
@@ -10,7 +11,7 @@ export const BASICS_LABEL = "ice, water, sugar, simple syrup and salt";
 const BASICS = /^(?:crushed |cubed |shaved )?ice(?: cubes?)?$|^(?:hot |cold |boiling |warm )?water$|^(?:white |granulated |caster )?sugar(?: cubes?)?$|^simple syrup$|^(?:kosher |sea )?salt$/;
 
 export function isBasic(name) {
-  return BASICS.test(clean(name));
+  return BASICS.test(normalize(name));
 }
 
 function readBar() {
@@ -50,31 +51,6 @@ function escapeRegExp(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// Lowercase, no accents, hyphens as spaces ("St-Germain" = "st germain").
-function clean(text) {
-  return normalize(text).replace(/[-‐–]/g, " ").replace(/\s+/g, " ").trim();
-}
-
-// Having the key also counts as having these. Kept short: common bottles that recipes name generically.
-const ALSO_COVERS = {
-  cointreau: ["orange liqueur", "triple sec"],
-  "triple sec": ["orange liqueur", "cointreau"],
-  "grand marnier": ["orange liqueur"],
-  curacao: ["orange liqueur"],
-  bourbon: ["whiskey", "whisky"],
-  rye: ["whiskey", "whisky"],
-  scotch: ["whiskey", "whisky"],
-  "st germain": ["elderflower liqueur"],
-  "elderflower liqueur": ["st germain"],
-  prosecco: ["sparkling wine"],
-  champagne: ["sparkling wine"],
-  cava: ["sparkling wine"],
-  "soda water": ["club soda"],
-  "club soda": ["soda water"],
-  kahlua: ["coffee liqueur"],
-  "coffee liqueur": ["kahlua"],
-};
-
 // Whole-word match that tolerates a plural: "lime" and "limes" both cover "lime juice", but "gin" doesn't cover "ginger beer".
 function wordPattern(text) {
   const stem = /ss$/.test(text) ? text : text.replace(/s$/, "");
@@ -85,7 +61,7 @@ function wordPattern(text) {
 function requiredNames(ingredients) {
   return (ingredients || [])
     .filter((item) => !isGarnish(item) && !/^\s*optional\b/i.test(item) && !isNote(item))
-    .map((item) => clean(ingredientName(item.replace(/^\s*[~≈]\s*/, ""))))
+    .map((item) => normalize(ingredientName(item.replace(/^\s*[~≈]\s*/, ""))))
     .filter(Boolean);
 }
 
@@ -93,10 +69,10 @@ function requiredNames(ingredients) {
 export function makeMissingFinder(bar) {
   const have = new Set();
   for (const item of bar.items) {
-    const name = clean(item);
+    const name = normalize(item);
     if (!name) continue;
     have.add(name);
-    (ALSO_COVERS[name] || []).forEach((alias) => have.add(alias));
+    alsoCovers(name).forEach((alias) => have.add(alias));
   }
   const items = [...have];
   const patterns = items.map(wordPattern);

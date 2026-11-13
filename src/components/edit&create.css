@@ -163,3 +163,8 @@
 .btn-accent:disabled {
   opacity: 0.6;
 }
+
+.steps-input {
+  resize: vertical;
+  line-height: 1.45;
+}

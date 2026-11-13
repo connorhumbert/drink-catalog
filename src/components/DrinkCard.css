@@ -175,3 +175,32 @@
   font-size: 0.85rem;
   font-weight: 500;
 }
+
+.drink-steps {
+  margin-top: 14px;
+}
+
+.drink-steps h3 {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.drink-steps p,
+.drink-steps ol {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.drink-steps ol {
+  padding-left: 1.3em;
+}
+
+.drink-steps li + li {
+  margin-top: 4px;
+}

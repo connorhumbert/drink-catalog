@@ -3,6 +3,7 @@ import Fuse from "fuse.js";
 import DrinkList from "./DrinkList";
 import SearchBar from "./SearchBar";
 import { buildSuggestions, hasIngredient, ingredientName, isGarnish, normalize } from "../ingredients";
+import { alsoFinds } from "../synonyms";
 import useDrinks from "../useDrinks";
 import useSessionState from "../useSessionState";
 import { LoadingOrEmpty, OfflineNote } from "./StatusMessages";
@@ -44,7 +45,13 @@ export default function RecordList() {
         ignoreLocation: true,
         minMatchCharLength: 2,
       });
+      const filtered = results;
       results = fuse.search(normalize(text)).map((hit) => hit.item.record);
+      // Typing a name with synonyms ("club soda") also lists drinks that use another name for it ("soda water").
+      if (alsoFinds(normalize(text)).length > 0) {
+        const shown = new Set(results);
+        results = [...results, ...filtered.filter((el) => !shown.has(el) && hasIngredient(el.ingredients, text))];
+      }
     }
     return results;
   }, [records, boozeType, ingredientTags, query]);
