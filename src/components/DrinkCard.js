@@ -6,7 +6,7 @@ import "./DrinkCard.css";
 const BOOZE_LABELS = { "Whiskey/Rye/Bourbon": "Whiskey", "Brandy/Cognac": "Brandy" };
 
 // `missing` (optional) lists ingredients the user's bar lacks, shown in My Bar.
-export default function DrinkCard({ record, open, liked, missing, onToggle, onDelete, onLike }) {
+export default function DrinkCard({ record, open, missing, onToggle, onDelete }) {
   const ingredients = record.ingredients || [];
   const preview = ingredients.filter((item) => !isGarnish(item) && !isNote(item)).map(ingredientName).join(" · ");
   const notes = ingredients.filter(isNoteLine).map(noteLineText).filter(Boolean).map((note) => note.charAt(0).toUpperCase() + note.slice(1));
@@ -42,10 +42,6 @@ export default function DrinkCard({ record, open, liked, missing, onToggle, onDe
           )}
           {record.glass && <p className="drink-glass">Serve in: {record.glass}</p>}
           <div className="drink-actions">
-            <button type="button" className={`card-action like${liked ? " liked" : ""}`} onClick={onLike} disabled={liked}>
-              {liked ? "♥ Liked" : "♡ Like"}
-              {record.likes > 0 && <span className="like-count">{record.likes}</span>}
-            </button>
             <Link className="card-action" to={`/edit/${record._id}`}>Edit</Link>
             <button type="button" className="card-action danger" onClick={onDelete}>Delete</button>
           </div>

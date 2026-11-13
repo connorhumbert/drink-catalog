@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 // We use Route in order to define the different routes of our application
 import { Route, Routes } from "react-router-dom";
@@ -12,22 +12,11 @@ import BarBottles from "./components/BarBottles";
 import Edit from "./components/edit";
 import Create from "./components/create";
 import { DrinksProvider } from "./useDrinks";
-import { applyUpdate, whenUpdateReady } from "./serviceWorkerRegistration";
 
 const App = () => {
-  const [updateReady, setUpdateReady] = useState(false);
-
-  // Shows the reload banner once a new version has been downloaded in the background.
-  useEffect(() => whenUpdateReady(() => setUpdateReady(true)), []);
-
   return (
     <DrinksProvider>
       <Navbar />
-      {updateReady && (
-        <button type="button" className="update-banner" onClick={applyUpdate}>
-          A new version is ready. Tap to reload.
-        </button>
-      )}
       <Routes>
         <Route exact path="/" element={<RecordList />} />
         <Route path="/bar" element={<BarTab />} />

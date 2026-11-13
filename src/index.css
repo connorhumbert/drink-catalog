@@ -81,16 +81,3 @@ a {
   font-size: 1.5rem;
   line-height: 1;
 }
-
-.update-banner {
-  display: block;
-  width: calc(100% - 32px);
-  max-width: 688px;
-  margin: 8px auto 0;
-  padding: 10px 14px;
-  background: var(--accent);
-  border: 0;
-  border-radius: 10px;
-  color: var(--accent-ink);
-  font-weight: 600;
-}

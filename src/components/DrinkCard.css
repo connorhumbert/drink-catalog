@@ -152,22 +152,6 @@
   font-size: 0.85rem;
 }
 
-.card-action.like {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-.card-action.like.liked {
-  background: rgba(224, 164, 88, 0.15);
-  opacity: 1;
-}
-
-.like-count {
-  margin-left: 8px;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
 .drink-missing {
   display: block;
   margin-top: 6px;

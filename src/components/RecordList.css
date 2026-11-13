@@ -115,3 +115,13 @@
   color: var(--muted);
   font-size: 0.8rem;
 }
+
+.modal-error {
+  margin: 12px 0 0;
+  color: var(--danger);
+  font-weight: 500;
+}
+
+.modal-btn:disabled {
+  opacity: 0.6;
+}

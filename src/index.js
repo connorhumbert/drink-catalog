@@ -15,5 +15,5 @@ createRoot(document.getElementById('root')).render(
   </React.StrictMode>
 );
 
-// Caches the app so it opens without a connection. App shows a reload prompt when a new version arrives.
+// Caches the app so it opens without a connection. New versions install themselves and show on the next open.
 serviceWorkerRegistration.register();

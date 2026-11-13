@@ -22,5 +22,5 @@ export function LoadingOrEmpty({ loading, error, fromCache }) {
 export function OfflineNote() {
   const online = useOnline();
   if (online) return null;
-  return <div className="offline-note">Offline. Showing recipes saved on this device. Changes will sync when you reconnect.</div>;
+  return <div className="offline-note">Offline. You can browse recipes, but adding or changing them needs an internet connection.</div>;
 }

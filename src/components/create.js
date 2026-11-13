@@ -4,20 +4,18 @@ import { Link } from "react-router-dom";
 import './edit&create.css';
 import { addDrink } from "../drinksApi";
 import useDrinks from "../useDrinks";
+import useOnline from "../useOnline";
 import DrinkForm from "./DrinkForm";
 
 export default function Create() {
   // Existing drinks feed ingredient autocomplete, garnish ideas and the duplicate-name check.
   const { records } = useDrinks();
+  const online = useOnline();
   const navigate = useNavigate();
 
-  // Don't wait for the server: offline, the save is queued and only resolves after reconnecting.
-  // The new drink shows in the list right away either way.
-  function onSubmit(drink) {
-    addDrink({ ...drink, glass: drink.glass || undefined }).catch((error) => {
-      console.error("Error creating cocktail:", error);
-      window.alert(`Couldn't save the cocktail: ${error.message}`);
-    });
+  // Saving needs a connection. If it fails, DrinkForm shows why and keeps what was typed.
+  async function onSubmit(drink) {
+    await addDrink({ ...drink, glass: drink.glass || undefined });
     navigate("/");
   }
 
@@ -25,6 +23,9 @@ export default function Create() {
     <div className="form-page">
       <Link className="back-link" to="/">← Back</Link>
       <h2>Create New Cocktail</h2>
+      {!online && (
+        <p className="offline-form-note">You're offline. You can fill this in, but you'll need an internet connection to save it.</p>
+      )}
       <DrinkForm initial={{}} records={records} submitLabel="Create Cocktail" onSubmit={onSubmit} />
       <p className="form-note">Note: This will create a cocktail visible to all website users.</p>
     </div>

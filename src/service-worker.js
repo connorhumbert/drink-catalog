@@ -7,12 +7,10 @@ import { registerRoute } from "workbox-routing";
 import { CacheFirst, StaleWhileRevalidate } from "workbox-strategies";
 import { CacheableResponsePlugin } from "workbox-cacheable-response";
 
-// A new version waits until the page asks it to take over (the "new version is ready" banner).
-// Taking over on its own would delete the old files while an open page might still need them, leaving a blank screen.
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
-});
-// On the very first install, start handling the page right away.
+// A new version takes over as soon as it has downloaded, so the next open or refresh shows it. No banner, no waiting.
+// Safe here because the app is one JS file and one CSS file, both already loaded by any open page, so removing the old
+// files can't break a page that's still open. If the build ever gets split into lazy-loaded chunks, revisit this.
+self.addEventListener("install", () => self.skipWaiting());
 clientsClaim();
 
 // The app's JS, CSS and index.html. The list is injected at build time.

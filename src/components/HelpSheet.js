@@ -22,7 +22,7 @@ export default function HelpSheet({ show, onHide }) {
           <li>
             <strong>＋ Add drink</strong> adds a new recipe for everyone.
           </li>
-          <li>Tap any cocktail to see the full recipe. Made one you liked? Tap “♡ Like”.</li>
+          <li>Tap any cocktail to see the full recipe.</li>
         </ul>
         <p className="help-version">Version {process.env.REACT_APP_VERSION}</p>
       </Modal.Body>

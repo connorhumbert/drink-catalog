@@ -1,11 +1,15 @@
 import React, { useMemo, useState } from "react";
 import { BOOZE_TYPES } from "../boozeTypes";
 import { buildSuggestions, fromFormState, normalize, toFormState } from "../ingredients";
+import { saveErrorMessage } from "../saving";
 import { GLASSES, suggestGarnishes, suggestGlass } from "../suggestions";
+import useOnline from "../useOnline";
 import IngredientEditor, { newRow } from "./IngredientEditor";
 import "./edit&create.css";
 
 // Shared by Create and Edit. `initial` is only read on first render, so mount it once the data is loaded.
+// `onSubmit` must save to the server and throw if it couldn't; the error is shown above the button and the form keeps
+// what was typed.
 export default function DrinkForm({ initial, records, excludeId, submitLabel, onSubmit }) {
   const [name, setName] = useState(initial.name || "");
   const [booze, setBooze] = useState(initial.booze || "");
@@ -18,6 +22,8 @@ export default function DrinkForm({ initial, records, excludeId, submitLabel, on
   const [garnish, setGarnish] = useState(startGarnish);
   const [notes, setNotes] = useState(startNotes);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const online = useOnline();
 
   const ingredientSuggestions = useMemo(() => buildSuggestions(records), [records]);
   const ingredientLines = rows.map((row) => row.text.trim()).filter(Boolean);
@@ -41,11 +47,14 @@ export default function DrinkForm({ initial, records, excludeId, submitLabel, on
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (saving) return;
+    if (saving || !online) return;
     setSaving(true);
+    setSaveError("");
     try {
       await onSubmit({ name: name.trim(), booze, glass, ingredients: fromFormState(rows.map((row) => row.text), garnish, notes) });
-    } finally {
+    } catch (error) {
+      console.error("Error saving cocktail:", error);
+      setSaveError(saveErrorMessage(error));
       setSaving(false);
     }
   }
@@ -142,7 +151,14 @@ export default function DrinkForm({ initial, records, excludeId, submitLabel, on
       </OptionalSection>
 
       <div className="form-group">
-        <button type="submit" className="btn-accent" disabled={saving}>{submitLabel}</button>
+        {saveError && (
+          <p className="field-hint warn save-error" role="alert">
+            {saveError}
+          </p>
+        )}
+        <button type="submit" className="btn-accent" disabled={saving || !online}>
+          {saving ? "Saving…" : online ? submitLabel : "Connect to the internet to save"}
+        </button>
       </div>
     </form>
   );
