@@ -31,6 +31,6 @@ Each drink's `ingredients` field is an array of free-text lines. Don't make peop
 ## Rules
 - **Never write to the Firestore database without the user's explicit approval of the exact changes.** Back up the `drinks` collection to `backups/` (gitignored) first, then verify the result afterward. The app has no auth, so any write affects everyone at once.
 - Viewing works offline; **adding, editing and deleting need a connection.** They run as Firestore transactions (`src/database/drinksApi.js`), which fail offline instead of queueing, and editing checks nobody changed the drink since the form opened. Nothing writes offline. Don't reintroduce plain `addDoc`/`updateDoc`/`deleteDoc`.
-- New app versions install themselves (`skipWaiting` in `src/service-worker.js`) and show on the next open or refresh. That's only safe while the build is a single JS/CSS bundle, so avoid lazy-loaded chunks.
+- New app versions install themselves (`skipWaiting` in `src/service-worker.js`). When one takes over an open page, `src/components/UpdateBanner.js` shows "Updating to the newest version…" and reloads, except on Add/Edit, where it waits until the person saves or leaves so typing isn't lost. That's only safe while the build is a single JS/CSS bundle, so avoid lazy-loaded chunks.
 - New features must not block saving or rewrite what someone typed. Suggest with chips they can tap or ignore.
 - Run the tests and a build before committing. Tests live next to the code (`*.test.js`).

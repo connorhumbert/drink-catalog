@@ -13,8 +13,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// Keep a copy of fetched drinks in IndexedDB so the app opens instantly and works without signal.
-// Writes made offline are queued and sent when the device reconnects.
+// Keep a copy of the drinks in IndexedDB so the app opens instantly and recipes can be read without signal.
+// This copy is only for reading: adding, editing and deleting need a connection (see drinksApi.js).
 export const db = initializeFirestore(app, {
   localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
 });

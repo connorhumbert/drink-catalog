@@ -24,6 +24,25 @@ function readBar() {
   return EMPTY_BAR;
 }
 
+// Asks the browser to keep this site's storage instead of clearing it when the phone runs low on space, so My Bar
+// isn't lost. Chrome decides by itself, with no pop-up, and says yes more often for sites added to the home screen.
+// It doesn't stop Safari clearing site data after 7 days without a visit. Asks at most once per page load.
+let askedToKeep = false;
+export async function askToKeepStorage(storage = typeof navigator !== "undefined" ? navigator.storage : undefined) {
+  if (askedToKeep || !storage?.persist) return false;
+  askedToKeep = true;
+  try {
+    return (await storage.persisted?.()) || (await storage.persist());
+  } catch (error) {
+    return false;
+  }
+}
+
+// For tests.
+export function resetAskToKeepStorage() {
+  askedToKeep = false;
+}
+
 // [bar, setBar] like useState, saved to localStorage and kept in sync across tabs.
 export function useCabinet() {
   const [bar, setBar] = useState(readBar);
@@ -34,6 +53,8 @@ export function useCabinet() {
     } catch (error) {
       console.error("Couldn't save My Bar:", error);
     }
+    // Only worth asking once there's something to keep.
+    if (bar.items.length > 0) askToKeepStorage();
   }, [bar]);
 
   useEffect(() => {

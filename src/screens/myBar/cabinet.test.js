@@ -1,4 +1,4 @@
-import { isBasic, missingById, missingFor, nextBottles } from "./cabinet";
+import { askToKeepStorage, isBasic, missingById, missingFor, nextBottles, resetAskToKeepStorage } from "./cabinet";
 
 const bar = (items, basics = true) => ({ items, basics });
 const drink = (id, ingredients) => ({ _id: id, name: id, ingredients });
@@ -89,5 +89,29 @@ describe("hasIngredient", () => {
     const daiquiri = ["2 oz rum", "1 oz lime juice", "(Variations to shake w/: cucumber, mint)"];
     expect(hasIngredient(daiquiri, "mint")).toBe(false);
     expect(hasIngredient(daiquiri, "lime")).toBe(true);
+  });
+});
+
+describe("askToKeepStorage", () => {
+  beforeEach(resetAskToKeepStorage);
+
+  it("asks the browser to keep storage once", async () => {
+    const storage = { persisted: jest.fn().mockResolvedValue(false), persist: jest.fn().mockResolvedValue(true) };
+    await expect(askToKeepStorage(storage)).resolves.toBe(true);
+    await expect(askToKeepStorage(storage)).resolves.toBe(false);
+    expect(storage.persist).toHaveBeenCalledTimes(1);
+  });
+
+  it("doesn't ask again when storage is already kept", async () => {
+    const storage = { persisted: jest.fn().mockResolvedValue(true), persist: jest.fn() };
+    await expect(askToKeepStorage(storage)).resolves.toBe(true);
+    expect(storage.persist).not.toHaveBeenCalled();
+  });
+
+  it("does nothing in browsers without it, and never throws", async () => {
+    await expect(askToKeepStorage(undefined)).resolves.toBe(false);
+    resetAskToKeepStorage();
+    const failing = { persisted: jest.fn().mockRejectedValue(new Error("no")), persist: jest.fn() };
+    await expect(askToKeepStorage(failing)).resolves.toBe(false);
   });
 });
