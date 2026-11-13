@@ -45,7 +45,10 @@ describe("synonyms", () => {
     expect(alsoCovers("cointreau").sort()).toEqual(["orange liqueur", "triple sec"]);
     expect(alsoCovers("triple sec").sort()).toEqual(["cointreau", "orange liqueur"]);
     expect(alsoCovers("bourbon").sort()).toEqual(["whiskey", "whisky"]);
-    expect(alsoCovers("orange liqueur")).toEqual([]);
+    expect(alsoCovers("orange liqueur").sort()).toEqual(["cointreau", "curacao", "grand marnier", "triple sec"]);
+    expect(alsoCovers("whiskey").sort()).toEqual(["bourbon", "rye", "scotch", "whisky"]);
+    expect(alsoCovers("brandy").sort()).toEqual(["armagnac", "cognac"]);
+    expect(alsoCovers("cognac")).toEqual(["brandy"]);
     expect(alsoCovers("water")).toEqual([]);
   });
 

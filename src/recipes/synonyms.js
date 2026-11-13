@@ -17,12 +17,16 @@ const SAME = [
 ];
 
 // A general name and the specific bottles it includes.
-// Searching the general name also finds the specific ones, and having a specific bottle in My Bar covers a recipe
-// that asks for the general name. Not the other way round: searching "bourbon" shouldn't show every scotch drink.
+// - Search: the general name also finds the specific ones, but not the other way round, so searching "bourbon"
+//   doesn't show every scotch drink.
+// - My Bar: works both ways. Bourbon in the bar covers a recipe asking for "whiskey", and "whiskey" in the bar covers
+//   a recipe asking for bourbon, the same way "rum" already covers "dark rum". People type the general name for what
+//   they have.
 const KINDS = {
   "orange liqueur": ["cointreau", "triple sec", "grand marnier", "curacao"],
   whiskey: ["bourbon", "rye", "scotch"],
   whisky: ["bourbon", "rye", "scotch"],
+  brandy: ["cognac", "armagnac"],
   "sparkling wine": ["prosecco", "champagne", "cava"],
 };
 
@@ -60,10 +64,11 @@ export function alsoFinds(term) {
   return [...found];
 }
 
-// Extra names that having `item` in My Bar covers: "cointreau" -> ["triple sec", "orange liqueur"].
-// `item` must already be normalized.
+// Extra names that having `item` in My Bar covers: "cointreau" -> ["triple sec", "orange liqueur"],
+// "whiskey" -> ["bourbon", "rye", "scotch"]. `item` must already be normalized.
 export function alsoCovers(item) {
   const covered = new Set(sameAs(item));
+  alsoFinds(item).forEach((name) => covered.add(name));
   const names = [item, ...covered];
   for (const [general, specifics] of Object.entries(KINDS)) {
     if (names.some((name) => specifics.some((specific) => contains(name, specific)))) covered.add(general);

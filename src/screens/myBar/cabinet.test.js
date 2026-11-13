@@ -148,3 +148,23 @@ describe("useCabinet when the browser won't store anything", () => {
     expect(screen.getByRole("button", { name: "1 items" })).toBeTruthy();
   });
 });
+
+describe("general names in My Bar", () => {
+  const oldFashioned = drink("Old Fashioned", ["2 oz bourbon", "1/4 oz simple syrup", "2 dashes angostura bitters", "Garnish: Orange twist"]);
+  const sazerac = drink("Sazerac", ["2 oz rye whiskey", "1 sugar cube", "3 dashes peychaud's bitters"]);
+  const sidecar = drink("Sidecar", ["2 oz cognac", "3/4 oz Cointreau", "3/4 oz lemon juice"]);
+
+  it("whiskey covers bourbon and rye", () => {
+    const myBar = bar(["disaronno", "whiskey", "angostura bitters"]);
+    expect(missingFor(oldFashioned, myBar)).toEqual([]);
+    expect(missingFor(sazerac, bar(["whiskey", "peychaud's bitters"]))).toEqual([]);
+  });
+
+  it("brandy covers cognac, and orange liqueur covers Cointreau", () => {
+    expect(missingFor(sidecar, bar(["brandy", "orange liqueur", "lemon juice"]))).toEqual([]);
+  });
+
+  it("still names what's missing", () => {
+    expect(missingFor(sidecar, bar(["brandy", "lemon juice"]))).toEqual(["cointreau"]);
+  });
+});
