@@ -86,3 +86,32 @@
   color: var(--accent-ink);
   font-weight: 600;
 }
+
+.offline-note {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.help-intro {
+  margin-bottom: 10px;
+}
+
+.dark-modal .help-list {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.dark-modal .help-list li {
+  margin-bottom: 12px;
+}
+
+.help-version {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}

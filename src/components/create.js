@@ -1,26 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import './edit&create.css';
-import { addDrink, getDrinks } from "../drinksApi";
+import { addDrink } from "../drinksApi";
+import useDrinks from "../useDrinks";
 import DrinkForm from "./DrinkForm";
 
 export default function Create() {
-  const [records, setRecords] = useState([]);
+  // Existing drinks feed ingredient autocomplete, garnish ideas and the duplicate-name check.
+  const { records } = useDrinks();
   const navigate = useNavigate();
 
-  // Existing drinks feed ingredient autocomplete, garnish ideas and the duplicate-name check.
-  useEffect(() => {
-    getDrinks().then(setRecords).catch((error) => console.error("Error loading cocktails:", error));
-  }, []);
-
-  async function onSubmit(drink) {
-    try {
-      await addDrink({ ...drink, glass: drink.glass || undefined });
-    } catch (error) {
-      window.alert(error);
-      return;
-    }
+  // Don't wait for the server: offline, the save is queued and only resolves after reconnecting.
+  // The new drink shows in the list right away either way.
+  function onSubmit(drink) {
+    addDrink({ ...drink, glass: drink.glass || undefined }).catch((error) => {
+      console.error("Error creating cocktail:", error);
+      window.alert(`Couldn't save the cocktail: ${error.message}`);
+    });
     navigate("/");
   }
 

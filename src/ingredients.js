@@ -1,11 +1,18 @@
 const UNITS =
-  "oz|ounces?|ml|cl|tsp|teaspoons?|tbsp|tablespoons?|cups?|dash(?:es)?|drops?|barspoons?|parts?|splash(?:es)?|slices?|wedges?|sprigs?|leaves|leaf|cubes?|pinch(?:es)?|scoops?|shots?|jiggers?|whole";
+  "oz|ounces?|ml|cl|tsp|teaspoons?|tbsp|tablespoons?|cups?|dash(?:es)?|drops?|bar ?spoons?|parts?|splash(?:es)?|slices?|wedges?|sprigs?|leaves|leaf|cubes?|pinch(?:es)?|scoops?|shots?|jiggers?|whole";
 
 const QUANTITY = /^[\d./\s-]+(?:to\s+[\d./]+\s*)?/;
 const UNIT = new RegExp(`^(?:${UNITS})\\b\\.?\\s*(?:of\\s+)?`, "i");
 
 export function isGarnish(raw) {
   return /^garnish\b/i.test(raw.trim());
+}
+
+// Notes rather than ingredients: "Substitute vodka: gin, rum", "Dirty: 1/2 oz olive brine", "(Variations to shake w/: mint)".
+// A colon inside parentheses is still an ingredient: "1 oz crème de cacao (substitute: kahlua)".
+export function isNote(raw) {
+  const text = raw.trim();
+  return text.startsWith("(") || text.replace(/\([^)]*\)?/g, "").includes(":");
 }
 
 // "1 1/4 oz rum (amber/dark)" -> "rum". Falls back to the raw text if nothing is left.
@@ -35,22 +42,26 @@ function escapeRegExp(text) {
 // Does any ingredient contain the tag at the start of a word? ("rum" matches "dark rum", not "crumb")
 export function hasIngredient(ingredients, tag) {
   const pattern = new RegExp(`(^|[^a-z0-9])${escapeRegExp(normalize(tag))}`);
-  return (ingredients || []).some((item) => !isGarnish(item) && pattern.test(normalize(ingredientName(item))));
+  return (ingredients || []).some((item) => !isGarnish(item) && !isNote(item) && pattern.test(normalize(ingredientName(item))));
 }
 
 // Ingredient names across all drinks, most common first, for autocomplete.
-export function buildSuggestions(records) {
+// minCount drops names used only once, which are often recipe notes ("muddle mint in shaker") rather than ingredients.
+export function buildSuggestions(records, { minCount = 1 } = {}) {
   const counts = new Map();
   for (const record of records) {
     for (const item of record.ingredients || []) {
-      if (isGarnish(item)) continue;
+      if (isGarnish(item) || isNote(item)) continue;
       const name = ingredientName(item);
       // Skip notes and substitution lines that aren't a single ingredient.
-      if (/[:,]/.test(name) || name.length > 32) continue;
+      if (/[:,~]/.test(name) || name.length > 32) continue;
       counts.set(name, (counts.get(name) || 0) + 1);
     }
   }
-  return [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([name]) => name);
+  return [...counts.entries()]
+    .filter(([, count]) => count >= minCount)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name]) => name);
 }
 
 const UNIT_CAPTURE = new RegExp(`^(${UNITS})\\b\\.?\\s*(?:of\\s+)?`, "i");

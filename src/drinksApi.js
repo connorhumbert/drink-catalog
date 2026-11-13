@@ -3,9 +3,8 @@ import {
   collection,
   deleteDoc,
   doc,
-  getDoc,
-  getDocs,
   increment,
+  onSnapshot,
   orderBy,
   query,
   serverTimestamp,
@@ -36,14 +35,15 @@ function toDrink(snapshot) {
   return { _id: snapshot.id, ...snapshot.data() };
 }
 
-export async function getDrinks() {
-  const snapshot = await getDocs(query(drinksCollection, orderBy("nameLower")));
-  return snapshot.docs.map(toDrink);
-}
+const drinksByName = query(drinksCollection, orderBy("nameLower"));
 
-export async function getDrink(id) {
-  const snapshot = await getDoc(doc(db, "drinks", id));
-  return snapshot.exists() ? toDrink(snapshot) : null;
+// Calls onChange with the cached list right away, then again whenever the server copy changes. Returns an unsubscribe function.
+export function subscribeDrinks(onChange, onError) {
+  return onSnapshot(
+    drinksByName,
+    (snapshot) => onChange(snapshot.docs.map(toDrink), snapshot.metadata.fromCache),
+    onError
+  );
 }
 
 export function addDrink(drink) {

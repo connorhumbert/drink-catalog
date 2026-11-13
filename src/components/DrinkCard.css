@@ -167,3 +167,11 @@
   color: var(--muted);
   font-size: 0.85rem;
 }
+
+.drink-missing {
+  display: block;
+  margin-top: 6px;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 500;
+}

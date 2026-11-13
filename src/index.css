@@ -12,6 +12,7 @@
   --danger: #e5645f;
   --serif: 'Playfair Display', Georgia, serif;
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --tabbar-h: 64px;
 }
 
 html,
@@ -25,6 +26,8 @@ body {
 body {
   margin: 0;
   overflow-x: hidden;
+  /* Room for the bottom tab bar. */
+  padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
 }
 
 a {
@@ -34,7 +37,7 @@ a {
 .page {
   max-width: 720px;
   margin: 0 auto;
-  padding: 0 16px 110px;
+  padding: 0 16px 32px;
 }
 
 .app-header {
@@ -79,25 +82,15 @@ a {
   line-height: 1;
 }
 
-.fab {
-  position: fixed;
-  right: 16px;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
-  z-index: 40;
-  padding: 14px 20px;
+.update-banner {
+  display: block;
+  width: calc(100% - 32px);
+  max-width: 688px;
+  margin: 8px auto 0;
+  padding: 10px 14px;
   background: var(--accent);
-  border-radius: 999px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  border: 0;
+  border-radius: 10px;
   color: var(--accent-ink);
   font-weight: 600;
-  text-decoration: none;
-}
-
-.version-label {
-  position: fixed;
-  left: 8px;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 4px);
-  font-size: 0.7rem;
-  opacity: 0.4;
-  pointer-events: none;
 }

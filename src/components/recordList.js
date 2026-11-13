@@ -1,45 +1,22 @@
-import React, { useEffect, useMemo, useState } from "react";
-import Modal from 'react-bootstrap/Modal';
+import React, { useMemo } from "react";
 import Fuse from "fuse.js";
-import DrinkCard from "./DrinkCard";
+import DrinkList from "./DrinkList";
 import SearchBar from "./SearchBar";
-import { getDrinks, deleteDrink, likeDrink } from "../drinksApi";
 import { buildSuggestions, hasIngredient, ingredientName, isGarnish, normalize } from "../ingredients";
+import useDrinks from "../useDrinks";
+import useSessionState from "../useSessionState";
+import { LoadingOrEmpty, OfflineNote } from "./StatusMessages";
 import "./RecordList.css";
 
-export default function RecordList({ setLoading }) {
-  const [loading, setLocalLoading] = useState(true); // Local loading state within RecordList
-  const [records, setRecords] = useState([]);
-  const [boozeType, setBoozeType] = useState("None");
-  const [query, setQuery] = useState("");
-  const [ingredientTags, setIngredientTags] = useState([]);
-  const [openId, setOpenId] = useState(null);
-  // Kept in memory only, so a refresh lets someone like again.
-  const [likedIds, setLikedIds] = useState([]);
-  const [popup, setPopup] = useState({
-    show: false,
-    id: null,
-    name: "",
-  });
+// The "Drinks" tab: the whole catalog with search and spirit filters.
+export default function RecordList() {
+  const { records, loading, error, fromCache } = useDrinks();
+  // Kept while switching tabs, so coming back from My Bar doesn't lose the search.
+  const [boozeType, setBoozeType] = useSessionState("drinks.booze", "None");
+  const [query, setQuery] = useSessionState("drinks.query", "");
+  const [ingredientTags, setIngredientTags] = useSessionState("drinks.ingredients", []);
 
-  async function getRecords() {
-    try {
-      const records = await getDrinks();
-      setRecords(records);
-    } catch (error) {
-      console.error("Error fetching cocktail recipes:", error);
-    } finally {
-      setLoading(false);
-      setLocalLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    getRecords();
-    // eslint-disable-next-line
-  }, []);
-
-  const suggestions = useMemo(() => buildSuggestions(records), [records]);
+  const suggestions = useMemo(() => buildSuggestions(records, { minCount: 2 }), [records]);
 
   const filteredCocktails = useMemo(() => {
     let results = records;
@@ -72,62 +49,9 @@ export default function RecordList({ setLoading }) {
     return results;
   }, [records, boozeType, ingredientTags, query]);
 
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="custom-spinner"></div>
-      </div>
-    );
+  if (loading || records.length === 0) {
+    return <LoadingOrEmpty loading={loading} error={error} fromCache={fromCache} />;
   }
-
-  if (records.length === 0) {
-    return (
-      <div className="empty-state">There is a big ol' problem, wait up to a minute and then refresh. If nothing appears contact Connor.</div>
-    );
-  }
-
-  async function deleteRecord(id) {
-    await deleteDrink(id);
-
-    const newRecords = records.filter((el) => el._id !== id);
-    setRecords(newRecords);
-  }
-
-  const handleDelete = (id) => {
-    const record = records.find((el) => el._id === id);
-    setPopup({
-      show: true,
-      id,
-      name: record ? record.name : "",
-    });
-  };
-
-
-  const handleDeleteTrue = () => {
-    if (popup.show && popup.id) {
-      deleteRecord(popup.id);
-      setPopup({
-        show: false,
-        id: null,
-        name: "",
-      });
-    }
-  };
-
-  const handleDeleteFalse = () => {
-    setPopup({
-      show: false,
-      id: null,
-      name: "",
-    });
-  };
-
-  const handleLike = (id) => {
-    if (likedIds.includes(id)) return;
-    setLikedIds([...likedIds, id]);
-    setRecords((prev) => prev.map((el) => (el._id === id ? { ...el, likes: (el.likes || 0) + 1 } : el)));
-    likeDrink(id).catch((error) => console.error("Error liking cocktail:", error));
-  };
 
   const clearFilters = () => {
     setBoozeType("None");
@@ -137,6 +61,8 @@ export default function RecordList({ setLoading }) {
 
   return (
     <div className="page">
+      <OfflineNote />
+
       <SearchBar
         query={query}
         setQuery={setQuery}
@@ -149,32 +75,15 @@ export default function RecordList({ setLoading }) {
         onClear={clearFilters}
       />
 
-      <Modal show={popup.show} onHide={handleDeleteFalse} centered contentClassName="dark-modal">
-        <Modal.Header closeButton>
-          <Modal.Title>Delete {popup.name || "this cocktail"}?</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>This will delete the cocktail for everyone that uses this website. This can't be undone.</Modal.Body>
-        <Modal.Footer>
-          <button type="button" className="modal-btn" onClick={handleDeleteFalse}>Cancel</button>
-          <button type="button" className="modal-btn danger" onClick={handleDeleteTrue}>Delete</button>
-        </Modal.Footer>
-      </Modal>
-
       {filteredCocktails.length === 0 && (
-        <div className="empty-state">No cocktails match. Try fewer ingredients or a different spelling.</div>
+        <div className="empty-state">
+          No cocktails match.
+          <br />
+          <button type="button" className="clear-link" onClick={clearFilters}>Clear the search and filters</button>
+        </div>
       )}
 
-      {filteredCocktails.map((record) => (
-        <DrinkCard
-          key={record._id}
-          record={record}
-          open={openId === record._id}
-          liked={likedIds.includes(record._id)}
-          onLike={() => handleLike(record._id)}
-          onToggle={() => setOpenId(openId === record._id ? null : record._id)}
-          onDelete={() => handleDelete(record._id)}
-        />
-      ))}
+      <DrinkList records={filteredCocktails} />
     </div>
   );
 }

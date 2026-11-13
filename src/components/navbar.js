@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import HelpSheet from "./HelpSheet";
 
-export default function Navbar({ loading }) {
-  const { pathname } = useLocation();
+export default function Navbar() {
   const [showHelp, setShowHelp] = useState(false);
 
   return (
@@ -17,10 +16,6 @@ export default function Navbar({ loading }) {
       </div>
 
       <HelpSheet show={showHelp} onHide={() => setShowHelp(false)} />
-
-      {!loading && pathname === "/" && (
-        <Link className="fab" to="/create">+ New cocktail</Link>
-      )}
     </>
   );
 }

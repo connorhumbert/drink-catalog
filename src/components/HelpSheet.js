@@ -9,14 +9,22 @@ export default function HelpSheet({ show, onHide }) {
         <Modal.Title>How to use</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <ol>
-          <li>Type in the search box to find a cocktail by name or ingredient.</li>
-          <li>Tap a booze type (Whiskey, Gin, Rum…) to narrow the list.</li>
-          <li>Under “Ingredients I have”, add what's in your kitchen to see what you can make.</li>
-          <li>Tap any cocktail to open its full recipe.</li>
-          <li>Made one? Tap “♡ Like” inside the recipe so everyone can see what's popular.</li>
-          <li>Don't see yours? Tap “+ New cocktail” to add it for everyone.</li>
-        </ol>
+        <p className="help-intro">Use the buttons along the bottom of the screen.</p>
+        <ul className="help-list">
+          <li>
+            <strong>🍹 Drinks</strong> shows every cocktail. Type in the search box to find one by name or by an
+            ingredient, or tap Whiskey, Gin and so on to see just those.
+          </li>
+          <li>
+            <strong>🍸 My Bar</strong>: tell it what you have at home, and it shows the cocktails you can make right
+            now, plus ones that need just one more thing.
+          </li>
+          <li>
+            <strong>＋ Add drink</strong> adds a new recipe for everyone.
+          </li>
+          <li>Tap any cocktail to see the full recipe. Made one you liked? Tap “♡ Like”.</li>
+        </ul>
+        <p className="help-version">Version {process.env.REACT_APP_VERSION}</p>
       </Modal.Body>
       <Modal.Footer>
         <button type="button" className="modal-btn primary" onClick={onHide}>Got it</button>

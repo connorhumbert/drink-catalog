@@ -1,0 +1,124 @@
+.bar-intro {
+  margin: -6px 0 18px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.basics-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.basics-toggle input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+}
+
+.form-page .basics-toggle label {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.95rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.page-title {
+  margin: 12px 0 10px;
+  font-family: var(--serif);
+  font-size: 1.6rem;
+}
+
+.bar-welcome p {
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.big-button {
+  display: block;
+  width: 100%;
+  padding: 15px 18px;
+  background: var(--accent);
+  border: 0;
+  border-radius: 12px;
+  color: var(--accent-ink);
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.outline-button {
+  flex: none;
+  padding: 10px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.bar-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.bar-section {
+  margin-top: 22px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  font-family: var(--serif);
+  font-size: 1.3rem;
+}
+
+.section-count {
+  padding: 2px 10px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  color: var(--accent);
+  font-family: var(--sans);
+  font-size: 0.95rem;
+}
+
+.section-empty,
+.buy-tip {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.buy-tip strong {
+  color: var(--text);
+}
+
+.field-help {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Keeps "Done" in reach above the tab bar while scrolling the ingredient list. */
+.done-bar {
+  position: sticky;
+  bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 10px);
+  margin-top: 24px;
+}
+
+.bar-bottles .clear-link {
+  padding-left: 0;
+}

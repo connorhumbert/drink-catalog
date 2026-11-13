@@ -1,13 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ingredientName, isGarnish } from "../ingredients";
+import { ingredientName, isGarnish, isNote } from "../ingredients";
 import "./DrinkCard.css";
 
 const BOOZE_LABELS = { "Whiskey/Rye/Bourbon": "Whiskey", "Brandy/Cognac": "Brandy" };
 
-export default function DrinkCard({ record, open, liked, onToggle, onDelete, onLike }) {
+// `missing` (optional) lists ingredients the user's bar lacks, shown in My Bar.
+export default function DrinkCard({ record, open, liked, missing, onToggle, onDelete, onLike }) {
   const ingredients = record.ingredients || [];
-  const preview = ingredients.filter((item) => !isGarnish(item)).map(ingredientName).join(" · ");
+  const preview = ingredients.filter((item) => !isGarnish(item) && !isNote(item)).map(ingredientName).join(" · ");
 
   return (
     <article className={`drink-card${open ? " open" : ""}`} data-booze={record.booze}>
@@ -19,6 +20,7 @@ export default function DrinkCard({ record, open, liked, onToggle, onDelete, onL
             <span className="chevron" aria-hidden="true">▾</span>
           </span>
         </span>
+        {missing && missing.length > 0 && <span className="drink-missing">You need: {missing.join(", ")}</span>}
         {!open && <span className="drink-preview">{preview}</span>}
         {!open && <span className="tap-hint">Tap for full recipe</span>}
       </button>
