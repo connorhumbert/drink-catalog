@@ -12,6 +12,7 @@ import BarTab from "./screens/myBar/BarTab";
 import BarBottles from "./screens/myBar/BarBottles";
 import EditDrink from "./screens/addEdit/EditDrink";
 import AddDrink from "./screens/addEdit/AddDrink";
+import DrinkPage from "./screens/drink/DrinkPage";
 import { DrinksProvider } from "./database/useDrinks";
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/bar/bottles" element={<BarBottles />} />
         <Route path="/edit/:id" element={<EditDrink />} />
         <Route path="/create" element={<AddDrink />} />
+        <Route path="/drink/:id" element={<DrinkPage />} />
       </Routes>
       <TabBar />
     </DrinksProvider>

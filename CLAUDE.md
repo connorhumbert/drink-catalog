@@ -19,6 +19,7 @@ A shared cocktail recipe app (Create React App, React 18, Firestore). There are 
   - `suggestions.js` (glass and garnish ideas), `boozeTypes.js` (the booze categories).
 - `src/screens/`: one folder per screen. `drinks/` (`DrinksTab.js`), `myBar/` (My Bar; `cabinet.js` is its saved list and "what you can make"), `addEdit/` (`AddDrink.js`, `EditDrink.js`, shared `DrinkForm.js` + `IngredientEditor.js`).
 - `src/components/`: pieces used by several screens: `DrinkList.js` + `DrinkCard.js`, `StatusMessages.js`, `Navbar.js`, `TabBar.js`, `HelpSheet.js`.
+- `src/screens/drink/DrinkPage.js`: one drink at `/drink/:id`, where shared links point. Keep that route stable. Sharing: `src/recipes/shareText.js` (the message) and `src/components/shareDrink.js` (share sheet, else clipboard).
 - `src/hooks/`: `useOnline`, `useSessionState`.
 
 ## Ingredient data conventions
@@ -30,6 +31,7 @@ Each drink's `ingredients` field is an array of free-text lines. Don't make peop
 - Prefer "generic word + brand" (`Domaine de Canton ginger liqueur`) and put a style before the spirit (`white rum`, `blanco tequila`).
 
 ## Rules
+- Each drink stores `name`, `nameLower`, `booze`, `ingredients`, optional `glass`, and server-set `createdAt`/`updatedAt` (older drinks may lack the dates; a few have an old `likes` count). `firestore.rules` is a copy of the rules the user publishes in the Firebase console: change it whenever saved fields change, and tell the user to publish it before deploying.
 - **Never write to the Firestore database without the user's explicit approval of the exact changes.** Back up the `drinks` collection to `backups/` (gitignored) first, then verify the result afterward. The app has no auth, so any write affects everyone at once.
 - Viewing works offline; **adding, editing and deleting need a connection.** They run as Firestore transactions (`src/database/drinksApi.js`), which fail offline instead of queueing, and editing checks nobody changed the drink since the form opened. Nothing writes offline. Don't reintroduce plain `addDoc`/`updateDoc`/`deleteDoc` (the one exception: `deleteDrink` repeats a successful delete locally so the list drops it at once). After saves and on returning to the app, `reconnect()` catches the live list up, because iPhones can leave the connection frozen. `useDrinks.js` restarts the live list if it stops with an error. Fresh data matters more than saving reads or offline polish: offline viewing is a minor case.
 - New app versions install themselves (`skipWaiting` in `src/service-worker.js`). When one takes over an open page, `src/components/UpdateBanner.js` shows "Updating to the newest version…" and reloads, except on Add/Edit, where it waits until the person saves or leaves so typing isn't lost. That's only safe while the build is a single JS/CSS bundle, so avoid lazy-loaded chunks.

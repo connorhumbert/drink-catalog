@@ -1,0 +1,41 @@
+// Firestore security rules for the drinks app. NOT deployed automatically: copy this into the Firebase console
+// (Firestore Database -> Rules -> Publish) whenever it changes. Keep it in step with toDrinkData() in
+// src/database/saving.js and the saves in src/database/drinksApi.js.
+//
+// There are no accounts, so these rules can't tell family from strangers. They keep the data in the right shape:
+// only the drinks collection, only the app's fields, sensible sizes, and dates set by the server's clock.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /drinks/{drinkId} {
+      allow read: if true;
+
+      // New drinks: recipe fields plus server-set dates. updatedAt and likes: 0 are optional so copies of the app
+      // from before they existed (likes) or were added (updatedAt) can still add drinks until they update.
+      allow create: if isRecipe(request.resource.data)
+        && request.resource.data.keys().hasAll(['name', 'nameLower', 'booze', 'ingredients', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['name', 'nameLower', 'booze', 'ingredients', 'glass', 'createdAt', 'updatedAt', 'likes'])
+        && request.resource.data.createdAt == request.time
+        && (!('updatedAt' in request.resource.data) || request.resource.data.updatedAt == request.time)
+        && (!('likes' in request.resource.data) || request.resource.data.likes == 0);
+
+      // Edits may change the recipe and updatedAt (to the server's time), never the created date or old like counts.
+      allow update: if isRecipe(request.resource.data)
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['name', 'nameLower', 'booze', 'ingredients', 'glass', 'updatedAt'])
+        && (!('updatedAt' in request.resource.data.diff(resource.data).affectedKeys())
+             || request.resource.data.updatedAt == request.time);
+
+      allow delete: if true;
+    }
+
+    function isRecipe(d) {
+      return d.name is string && d.name.size() > 0 && d.name.size() <= 100
+        && d.nameLower is string && d.nameLower.size() <= 100
+        && d.booze is string && d.booze.size() > 0 && d.booze.size() <= 50
+        && d.ingredients is list && d.ingredients.size() <= 100
+        && (!('glass' in d) || (d.glass is string && d.glass.size() <= 100));
+    }
+  }
+}

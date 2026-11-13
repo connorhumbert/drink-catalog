@@ -62,7 +62,8 @@ export function addDrink(drink) {
   return saveThenRefresh(
     runTransaction(db, async (transaction) => {
       await transaction.get(ref);
-      transaction.set(ref, { ...toDrinkData(drink), createdAt: serverTimestamp() });
+      // Both dates come from the server's clock, not the phone's, which may be wrong.
+      transaction.set(ref, { ...toDrinkData(drink), createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
     })
   );
 }
@@ -76,7 +77,7 @@ export function updateDrink(id, drink, original) {
       const current = await transaction.get(ref);
       if (!current.exists()) throw new DeletedError();
       if (original && !sameRecipe(current.data(), original)) throw new ConflictError();
-      transaction.update(ref, toDrinkData(drink));
+      transaction.update(ref, { ...toDrinkData(drink), updatedAt: serverTimestamp() });
     })
   );
 }

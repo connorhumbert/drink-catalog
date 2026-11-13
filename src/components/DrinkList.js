@@ -7,9 +7,9 @@ import useOnline from "../hooks/useOnline";
 import "./RecordList.css";
 
 // Cards with Edit and Delete. `missing` (optional) maps drink id -> ingredients the user still needs; `onHave`
-// (optional) adds one of them to My Bar.
-export default function DrinkList({ records, missing, onHave }) {
-  const [openId, setOpenId] = useState(null);
+// (optional) adds one of them to My Bar. `initialOpenId` (optional) starts with that drink open.
+export default function DrinkList({ records, missing, onHave, initialOpenId = null }) {
+  const [openId, setOpenId] = useState(initialOpenId);
   const [toDelete, setToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");

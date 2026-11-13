@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ingredientName, isGarnish, isNote, isNoteLine, noteLineText } from "../recipes/ingredients";
+import { shareDrink } from "./shareDrink";
 import "./DrinkCard.css";
+
+// How long "Copied ✓" or "Couldn't share" stays on the Share button.
+export const SHARE_MESSAGE_MS = 2500;
+const SHARE_LABELS = { copied: "Copied ✓", unavailable: "Couldn't share" };
 
 const BOOZE_LABELS = { "Whiskey/Rye/Bourbon": "Whiskey", "Brandy/Cognac": "Brandy" };
 
@@ -11,6 +16,18 @@ export default function DrinkCard({ record, open, missing, onToggle, onDelete, o
   const ingredients = record.ingredients || [];
   const preview = ingredients.filter((item) => !isGarnish(item) && !isNote(item)).map(ingredientName).join(" · ");
   const notes = ingredients.filter(isNoteLine).map(noteLineText).filter(Boolean).map((note) => note.charAt(0).toUpperCase() + note.slice(1));
+
+  // Phones open their share sheet, which is feedback enough. Computers copy the recipe instead, so say so briefly.
+  const [shareResult, setShareResult] = useState(null);
+  useEffect(() => {
+    if (!shareResult) return undefined;
+    const timer = setTimeout(() => setShareResult(null), SHARE_MESSAGE_MS);
+    return () => clearTimeout(timer);
+  }, [shareResult]);
+  async function onShare() {
+    const result = await shareDrink(record);
+    if (SHARE_LABELS[result]) setShareResult(result);
+  }
 
   return (
     <article className={`drink-card${open ? " open" : ""}`} data-booze={record.booze}>
@@ -53,6 +70,9 @@ export default function DrinkCard({ record, open, missing, onToggle, onDelete, o
           )}
           {record.glass && <p className="drink-glass">Serve in: {record.glass}</p>}
           <div className="drink-actions">
+            <button type="button" className="card-action" onClick={onShare}>
+              {SHARE_LABELS[shareResult] || "Share"}
+            </button>
             <Link className="card-action" to={`/edit/${record._id}`}>Edit</Link>
             <button type="button" className="card-action danger" onClick={onDelete}>Delete</button>
           </div>
