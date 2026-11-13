@@ -1,5 +1,6 @@
 import {
   collection,
+  deleteDoc,
   disableNetwork,
   doc,
   enableNetwork,
@@ -80,13 +81,18 @@ export function updateDrink(id, drink, original) {
   );
 }
 
-export function deleteDrink(id) {
+export async function deleteDrink(id) {
   const ref = doc(db, "drinks", id);
-  return saveThenRefresh(
+  await withTimeout(
     runTransaction(db, async (transaction) => {
       const current = await transaction.get(ref);
       if (!current.exists()) return;
       transaction.delete(ref);
     })
   );
+  // The drink is gone from the server, but a transaction doesn't change this phone's list, and when the list catches
+  // up after a reconnect Firestore can be slow to report deletions. Deleting it again here, the ordinary way, removes
+  // it from this phone's list and saved copy straight away. On the server it's already gone, so this changes nothing
+  // there; drink IDs are random and never reused, so even a late retry can't remove anything else.
+  deleteDoc(ref).catch((error) => console.error("Couldn't remove the deleted cocktail from this phone's list:", error));
 }
