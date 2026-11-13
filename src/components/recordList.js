@@ -41,7 +41,9 @@ export default function RecordList() {
           { name: "ingredients", weight: 0.3 },
           { name: "booze", weight: 0.1 },
         ],
-        threshold: 0.3,
+        // 0.2 still finds most one-letter typos ("margerita", "mohito") but stops near-misses like
+        // "Orange Julius" matching every drink with orange juice. 0.15 and below start missing real typos.
+        threshold: 0.2,
         ignoreLocation: true,
         minMatchCharLength: 2,
       });
