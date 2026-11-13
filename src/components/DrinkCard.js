@@ -5,8 +5,9 @@ import "./DrinkCard.css";
 
 const BOOZE_LABELS = { "Whiskey/Rye/Bourbon": "Whiskey", "Brandy/Cognac": "Brandy" };
 
-// `missing` (optional) lists ingredients the user's bar lacks, shown in My Bar.
-export default function DrinkCard({ record, open, missing, onToggle, onDelete }) {
+// `missing` (optional) lists ingredients the user's bar lacks, shown in My Bar. With `onHave`, each one gets an
+// "I have …" button that adds it to the bar.
+export default function DrinkCard({ record, open, missing, onToggle, onDelete, onHave }) {
   const ingredients = record.ingredients || [];
   const preview = ingredients.filter((item) => !isGarnish(item) && !isNote(item)).map(ingredientName).join(" · ");
   const notes = ingredients.filter(isNoteLine).map(noteLineText).filter(Boolean).map((note) => note.charAt(0).toUpperCase() + note.slice(1));
@@ -25,6 +26,16 @@ export default function DrinkCard({ record, open, missing, onToggle, onDelete })
         {!open && <span className="drink-preview">{preview}</span>}
         {!open && <span className="tap-hint">Tap for full recipe</span>}
       </button>
+      {/* Outside the head button: a button can't sit inside another button. */}
+      {onHave && missing && missing.length > 0 && (
+        <div className="have-row">
+          {missing.map((name) => (
+            <button type="button" key={name} className="have-button" onClick={() => onHave(name)}>
+              ＋ I have {name}
+            </button>
+          ))}
+        </div>
+      )}
       {open && (
         <div className="drink-body">
           <ul className="drink-ingredients">

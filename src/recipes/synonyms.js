@@ -81,8 +81,8 @@ function brandsOf(category) {
   return spellingsOf(category).flatMap((name) => BRANDS[name] || []);
 }
 
-// Categories of the brand named in `item`: "tito's handmade vodka" -> ["vodka"].
-function brandCategories(item) {
+// Categories of the brand named in `item`: "tito's handmade vodka" -> ["vodka"]. `item` must already be normalized.
+export function brandCategories(item) {
   return Object.keys(BRANDS).filter((category) => BRANDS[category].some((brand) => contains(item, brand)));
 }
 

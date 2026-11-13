@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { missingById, nextBottles, useCabinet } from "./cabinet";
 import useDrinks from "../../database/useDrinks";
@@ -6,11 +6,39 @@ import DrinkList from "../../components/DrinkList";
 import { LoadingOrEmpty, OfflineNote } from "../../components/StatusMessages";
 import "./MyBar.css";
 
+// How long "Added … to your bar. Undo" stays on screen.
+export const ADDED_MESSAGE_MS = 8000;
+// After an add, the card leaves and the next card's "＋ I have…" slides under the finger, so taps are ignored briefly
+// to stop a double-tap adding a second ingredient by accident.
+export const ADD_PAUSE_MS = 800;
+
 // The "My Bar" tab: what you can make with what you have, and what's one ingredient away.
 export default function BarTab() {
   const { records, loading, error, fromCache } = useDrinks();
-  const [bar] = useCabinet();
+  const [bar, setBar] = useCabinet();
   const hasBar = bar.items.length > 0;
+
+  // "＋ I have honey syrup" on a drink that's one away adds it to the bar. The drink then moves up to "Ready to
+  // make", so a message at the bottom says what happened, with Undo in case it was a mistap.
+  const [justAdded, setJustAdded] = useState(null);
+  useEffect(() => {
+    if (!justAdded) return undefined;
+    const timer = setTimeout(() => setJustAdded(null), ADDED_MESSAGE_MS);
+    return () => clearTimeout(timer);
+  }, [justAdded]);
+
+  const lastAdd = useRef(0);
+  function addToBar(name) {
+    if (Date.now() - lastAdd.current < ADD_PAUSE_MS) return;
+    lastAdd.current = Date.now();
+    setBar((prev) => (prev.items.includes(name) ? prev : { ...prev, items: [...prev.items, name] }));
+    setJustAdded(name);
+  }
+
+  function undoAdd() {
+    setBar((prev) => ({ ...prev, items: prev.items.filter((item) => item !== justAdded) }));
+    setJustAdded(null);
+  }
 
   const { ready, almost, missing, buyNext } = useMemo(() => {
     if (!hasBar) return { ready: [], almost: [], missing: new Map(), buyNext: [] };
@@ -72,10 +100,24 @@ export default function BarTab() {
             {almost.length === 0 ? (
               <p className="section-empty">No drinks are just one ingredient away.</p>
             ) : (
-              <DrinkList records={almost} missing={missing} />
+              <>
+                <p className="have-hint">Already have it? Tap “＋ I have…” to add it to your bar.</p>
+                <DrinkList records={almost} missing={missing} onHave={addToBar} />
+              </>
             )}
           </section>
         </>
+      )}
+
+      {justAdded && (
+        <div className="added-message" role="status">
+          <span>
+            Added <strong>{justAdded}</strong> to your bar.
+          </span>
+          <button type="button" className="added-undo" onClick={undoAdd}>
+            Undo
+          </button>
+        </div>
       )}
     </div>
   );

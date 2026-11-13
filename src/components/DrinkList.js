@@ -6,8 +6,9 @@ import { deleteErrorMessage } from "../database/saving";
 import useOnline from "../hooks/useOnline";
 import "./RecordList.css";
 
-// Cards with Edit and Delete. `missing` (optional) maps drink id -> ingredients the user still needs.
-export default function DrinkList({ records, missing }) {
+// Cards with Edit and Delete. `missing` (optional) maps drink id -> ingredients the user still needs; `onHave`
+// (optional) adds one of them to My Bar.
+export default function DrinkList({ records, missing, onHave }) {
   const [openId, setOpenId] = useState(null);
   const [toDelete, setToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -68,6 +69,7 @@ export default function DrinkList({ records, missing }) {
           record={record}
           open={openId === record._id}
           missing={missing?.get(record._id)}
+          onHave={onHave}
           onToggle={() => setOpenId(openId === record._id ? null : record._id)}
           onDelete={() => askToDelete({ id: record._id, name: record.name })}
         />

@@ -195,3 +195,17 @@ describe("brands in My Bar", () => {
     expect(missingFor(mule, bar(["bacardi", "ginger beer", "lime juice"]))).toEqual(["vodka"]);
   });
 });
+
+describe("recipes that name a brand", () => {
+  const fairmont = drink("Fairmont Old-Fashioned", ["2 oz Mount Gay Black Barrel rum", "1/4 oz simple syrup", "2 dashes angostura bitters"]);
+
+  it("count as asking for the brand's category", () => {
+    expect(missingFor(fairmont, bar(["dark rum", "angostura bitters"]))).toEqual([]);
+    expect(missingFor(fairmont, bar(["rum", "angostura bitters"]))).toEqual([]);
+    expect(missingFor(fairmont, bar(["bacardi", "angostura bitters"]))).toEqual([]);
+  });
+
+  it("aren't covered by a different spirit", () => {
+    expect(missingFor(fairmont, bar(["vodka", "angostura bitters"]))).toEqual(["mount gay black barrel rum"]);
+  });
+});

@@ -122,3 +122,46 @@
 .bar-bottles .clear-link {
   padding-left: 0;
 }
+
+.have-hint {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* "Added honey syrup to your bar. Undo", just above the tab bar. */
+.added-message {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 12px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 696px;
+  margin: 0 auto;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  color: var(--text);
+}
+
+.added-message strong {
+  color: var(--accent);
+}
+
+.added-undo {
+  flex: none;
+  padding: 10px 18px;
+  background: var(--accent);
+  border: 0;
+  border-radius: 999px;
+  color: var(--accent-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}

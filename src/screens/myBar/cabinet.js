@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ingredientName, isGarnish, isNote, normalize } from "../../recipes/ingredients";
-import { alsoCovers } from "../../recipes/synonyms";
+import { alsoCovers, brandCategories } from "../../recipes/synonyms";
 
 // The user's bar lives only on this device. There are no accounts, so it can't be tied to anyone in Firestore.
 const STORAGE_KEY = "myBar";
@@ -103,7 +103,10 @@ export function makeMissingFinder(bar) {
     if (bar.basics && isBasic(name)) return true;
     if (patterns.some((pattern) => pattern.test(name))) return true;
     const linePattern = wordPattern(name);
-    return items.some((item) => linePattern.test(item));
+    if (items.some((item) => linePattern.test(item))) return true;
+    // A line naming a brand also asks for the brand's category: "mount gay black barrel rum" is a rum, so whatever
+    // covers a recipe asking for "rum" (like "dark rum") covers it too.
+    return brandCategories(name).some((category) => category !== name && covered(category));
   };
   return (record) => requiredNames(record.ingredients).filter((name) => !covered(name));
 }
